@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Player from './Player';
 import ViewPage from './viewPage';
 import mondaySdk from 'monday-sdk-js';
-
-
+import { Header } from "@npm-workspace-demo/components"
+// import { Header } from "/packages/components/src/index.js"
+import logo from './frame2.png';
 const App = () => {
   const [url, setUrl] = useState('');
   const [inputUrl, setInputUrl] = useState('');
   const [fontCol, setFontCol] = useState('#ffffff');
   const [bgCol, setBgCol] = useState('#181b34');
-  const [view, setView]=useState(false);
+  const [view, setView] = useState(false);
   const monday = mondaySdk();
 
   monday.setApiVersion("2023-10");
@@ -30,15 +31,15 @@ const App = () => {
       setFontCol("#ffffff");
     }
   };
- 
+
   useEffect(() => {
     // Fetch initial context
     monday.get('context').then(res => {
-      
+
       const isViewOnly = res.data?.user?.isViewOnly;
       setView(isViewOnly);
       console.log("The isviewOnly parameter is set to ", isViewOnly);
-      
+
       const col = res.data['theme'];
       console.log("Initial theme: ", col);
       updateTheme(col);
@@ -57,7 +58,15 @@ const App = () => {
 
 
   // var isViewOnly = false;
+  var defaulturl = 'https://docs.google.com/document/d/1-Bi6NTfIqHHF0ir-Y2Ycng3YQi-vFr5TP-wrfnyVIoc/edit';
+  var matchingSequence = /\/d\/([a-zA-Z0-9-_]+)/;
+  var ifEditing = true;
 
+  var appName = 'Google Docs Embed For monday';
+  var dashUrl = 'Google docs';
+  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var decodePart1 = 'https://docs.google.com/document/d/';
+  var decodePart2 = '/preview';
 
   const handleInputChange = (event) => {
     setInputUrl(event.target.value);
@@ -81,7 +90,9 @@ const App = () => {
         {view ? (
           <ViewPage fontCol={fontCol} bgCol={bgCol} />
         ) : (
-          <Player fontCol={fontCol} bgCol={bgCol} />
+          <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
+           ifEditing={ifEditing} logo={logo} appName={appName} 
+          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} />
         )}
 
 
