@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Player from './Player';
 import ViewPage from './viewPage';
 import mondaySdk from 'monday-sdk-js';
 import { Header } from "@npm-workspace-demo/components"

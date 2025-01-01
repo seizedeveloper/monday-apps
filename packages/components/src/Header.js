@@ -613,7 +613,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
       {showWarning && (
         <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
-          Invalid Google Docs URL. Please check the link and try again.
+          Invalid {dashUrl} URL. Please check the link and try again.
         </div>
       )}
 

@@ -596,7 +596,7 @@ const Header = _ref => {
       margin: "5px",
       width: "600px"
     }
-  }, "Invalid Google Docs URL. Please check the link and try again."), !submitted && /*#__PURE__*/_react.default.createElement("div", {
+  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), !submitted && /*#__PURE__*/_react.default.createElement("div", {
     className: "details"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info"

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Player from './Player';
 import ViewPage from './viewPage';
 import mondaySdk from 'monday-sdk-js';
-
+import { Header } from "@npm-workspace-demo/components"
+import logo from './logoApp_new.png';
 
 const App = () => {
   const [url, setUrl] = useState('');
@@ -11,6 +11,18 @@ const App = () => {
   const [bgCol, setBgCol] = useState('#181b34');
   const [view, setView]=useState(false);
   const monday = mondaySdk();
+
+
+  var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=a2748109-4a75-406b-94bb-0e6d7ad47a73';
+  var matchingSequence = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
+  var ifEditing = false;
+
+  var appName = 'Loom Embed For monday';
+  var dashUrl = 'Video';
+  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var decodePart1 = 'https://www.loom.com/embed/';
+  var decodePart2 = '?autoplay=false';
+
 
   monday.setApiVersion("2023-10");
   //   monday.get('sessionToken')
@@ -81,7 +93,9 @@ const App = () => {
         {view ? (
           <ViewPage fontCol={fontCol} bgCol={bgCol} />
         ) : (
-          <Player fontCol={fontCol} bgCol={bgCol} />
+         <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
+                    ifEditing={ifEditing} logo={logo} appName={appName} 
+                   dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} />
         )}
 
 
