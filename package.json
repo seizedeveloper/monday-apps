@@ -14,8 +14,18 @@
     "./apps/*"
   ],
   "devDependencies": {
-    "eslint-plugin-jest": "^28.10.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-jest": "^27.2.0",
+    "eslint-config-react-app": "^6.0.0",
     "lerna": "^8.1.9",
     "react-refresh": "^0.16.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   }
+
+
 }
