@@ -29,7 +29,8 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+     "parser": "@babel/eslint-parser"
   },
   "browserslist": {
     "production": [
@@ -44,6 +45,10 @@
     ]
   },
   "devDependencies": {
+    "@babel/cli": "^7.20.8",
+    "@babel/core": "^7.20.8",
+    "@babel/plugin-syntax-jsx": "^7.25.9",
+    "@babel/preset-react": "^7.26.3",
     "rimraf": "^6.0.1"
   }
 }
