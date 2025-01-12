@@ -35,8 +35,9 @@ const Header = _ref => {
   } = _ref;
   const monday = (0, _mondaySdkJs.default)();
   monday.setApiVersion("2023-10");
+  const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
   const defaultUrl = defaulturl;
-  const id = defaultUrl.match(matchingSequence)[1];
+  const id = defaultUrl.match(matchingSequence2)[1];
   const defUrl = defaulturl;
   const [url, setUrl] = (0, _react.useState)('');
   const [width, setWidth] = (0, _react.useState)(600);
@@ -129,7 +130,7 @@ const Header = _ref => {
       setUrl(storedurl);
       const loomIdMatch = storedurl.match(matchingSequence);
       if (loomIdMatch && loomIdMatch[1]) {
-        setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1]).concat(decodePart2));
+        setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1]).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
         setShowWarning(false);
       } else {
         // setShowWarning(true);
@@ -138,9 +139,9 @@ const Header = _ref => {
       monday.execute('valueCreatedForUser'); // Value-created event when URL is successfully set
     } else {
       setUrl(defaultUrl);
-      const loomIdMatch = defaultUrl.match(matchingSequence);
+      const loomIdMatch = defaultUrl.match(matchingSequence2);
       if (loomIdMatch && loomIdMatch[1]) {
-        setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1]).concat(decodePart2));
+        setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
         setShowWarning(false);
       } else {
         setShowWarning(true);
@@ -181,7 +182,7 @@ const Header = _ref => {
       if (storedisEditing) {
         const loomIdMatch = url.match(matchingSequence);
         if (loomIdMatch && loomIdMatch[1]) {
-          setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1], "/edit"));
+          setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1], "/edit")) || setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
         }
       }
     }
@@ -253,7 +254,7 @@ const Header = _ref => {
     // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl.match(matchingSequence);
     if (loomIdMatch && loomIdMatch[1]) {
-      setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1]).concat(decodePart2));
+      setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1]).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
       // setShow(false);
       setShowWarning(false);
       setIsEditing(false);
@@ -310,7 +311,7 @@ const Header = _ref => {
   }, "Learn more.")), /*#__PURE__*/_react.default.createElement("button", {
     className: "accept-button",
     onClick: handleAccept
-  }, "Accept Cookies"))), !submitted && /*#__PURE__*/_react.default.createElement("div", {
+  }, "Accept Cookies"))), /*#__PURE__*/_react.default.createElement("div", {
     className: "company"
   }, /*#__PURE__*/_react.default.createElement("img", {
     src: logo,
@@ -382,7 +383,7 @@ const Header = _ref => {
       borderRadius: "40px",
       color: 'black'
     }
-  })), show && !showWarning && embedUrl != defUrl && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("button", {
+  })), ifEditing && show && !showWarning && embedUrl != defUrl && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("button", {
     type: "button",
     className: "btn btn-secondary",
     onClick: toggleEditMode,
@@ -429,7 +430,7 @@ const Header = _ref => {
       transition: 'left 0.3s ease',
       boxShadow: '0 2px 5px rgba(0,0,0,0.15)'
     }
-  })), isEditing ? "Edit" : "View"), /*#__PURE__*/_react.default.createElement("br", null)), !submitted && !showWarning && embedUrl != defUrl && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("button", {
+  })), isEditing ? "Edit" : "View"), /*#__PURE__*/_react.default.createElement("br", null)), ifEditing && !submitted && !showWarning && embedUrl != defUrl && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("button", {
     type: "button",
     className: "btn btn-secondary",
     onClick: toggleEditMode,
@@ -596,7 +597,7 @@ const Header = _ref => {
       margin: "5px",
       width: "600px"
     }
-  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), !submitted && /*#__PURE__*/_react.default.createElement("div", {
+  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), /*#__PURE__*/_react.default.createElement("div", {
     className: "details"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info"

@@ -17,8 +17,10 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const monday = mondaySdk();
   monday.setApiVersion("2023-10");
 
+  const matchingSequence2=/(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
+
   const defaultUrl = defaulturl;
-  const id = defaultUrl.match(matchingSequence)[1];
+  const id = defaultUrl.match(matchingSequence2)[1];
   const defUrl = defaulturl;
 
   const [url, setUrl] = useState('');
@@ -115,7 +117,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       setUrl(storedurl);
       const loomIdMatch = storedurl.match(matchingSequence);
       if (loomIdMatch && loomIdMatch[1]) {
-        setEmbedUrl(`${decodePart1}${loomIdMatch[1]}${decodePart2}`);
+        setEmbedUrl(`${decodePart1}${loomIdMatch[1]}${decodePart2 ?? ''}`);
         setShowWarning(false);
       } else {
         // setShowWarning(true);
@@ -127,9 +129,9 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     }
     else {
       setUrl(defaultUrl);
-      const loomIdMatch = defaultUrl.match(matchingSequence);
+      const loomIdMatch = defaultUrl.match(matchingSequence2);
       if (loomIdMatch && loomIdMatch[1]) {
-        setEmbedUrl(`${decodePart1}${loomIdMatch[1]}${decodePart2}`);
+        setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
         setShowWarning(false);
       } else {
         setShowWarning(true);
@@ -177,7 +179,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       if (storedisEditing) {
         const loomIdMatch = url.match(matchingSequence);
         if (loomIdMatch && loomIdMatch[1]) {
-          setEmbedUrl(`${decodePart1}${loomIdMatch[1]}/edit`);
+          setEmbedUrl(`${decodePart1}${loomIdMatch[1]}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
         }
       }
     }
@@ -252,7 +254,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl.match(matchingSequence);
     if (loomIdMatch && loomIdMatch[1]) {
-      setEmbedUrl(`${decodePart1}${loomIdMatch[1]}${decodePart2}`);
+      setEmbedUrl(`${decodePart1}${loomIdMatch[1]}${decodePart2 ?? ''}`);
       // setShow(false);
       setShowWarning(false);
       setIsEditing(false);
@@ -325,7 +327,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
 
 
-      {!submitted && (<div className="company">
+      { (<div className="company">
         <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px" }} />
         <div className="name" >
           <b><span style={{ height: "19px", color: fontCol }}>{appName}</span></b>
@@ -420,7 +422,8 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
         </div>
       )}
-      {show && !showWarning && (embedUrl != defUrl) && (<>
+      
+      {ifEditing && show && !showWarning && (embedUrl != defUrl) && (<>
         <button
           type="button"
           className="btn btn-secondary"
@@ -476,7 +479,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         </button>
         <br /></>
       )}
-      {!submitted && !showWarning && (embedUrl != defUrl) && (<>
+      {ifEditing && !submitted && !showWarning && (embedUrl != defUrl) && (<>
         <button
           type="button"
           className="btn btn-secondary"
@@ -617,7 +620,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         </div>
       )}
 
-      {!submitted && (<div className="details">
+      { (<div className="details">
         <div className="info">
           <div >
             <h4 style={{ textAlign: "left", height: "36px" }}>Additional information</h4>

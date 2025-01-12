@@ -3,7 +3,7 @@ import ViewPage from './viewPage';
 import mondaySdk from 'monday-sdk-js';
 import { Header } from "@npm-workspace-demo/components"
 // import { Header } from "/packages/components/src/index.js"
-import logo from './frame2.png';
+import logo from './calendar.png';
 const App = () => {
   const [url, setUrl] = useState('');
   const [inputUrl, setInputUrl] = useState('');
@@ -58,14 +58,14 @@ const App = () => {
 
   // var isViewOnly = false;
   var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
-  var matchingSequence = /\/d\/([a-zA-Z0-9-_]+)/;
+  var matchingSequence = /(?:calendar\.google\.com\/calendar\/(?:u\/\d+\/)?embed\?src=)([^&]+)/;
   var ifEditing = true;
 
-  var appName = 'Google Docs Integration for monday';
-  var dashUrl = 'Google docs';
+  var appName = 'Google Calendar Integration for monday';
+  var dashUrl = 'Google Calendar';
   var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
-  var decodePart1 = 'https://docs.google.com/document/d/';
-  var decodePart2 = '/preview';
+  var decodePart1 = 'https://calendar.google.com/calendar/embed?src=';
+  var decodePart2 = null;
 
   const handleInputChange = (event) => {
     setInputUrl(event.target.value);

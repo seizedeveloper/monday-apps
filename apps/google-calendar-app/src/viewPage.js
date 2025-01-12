@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import logo from './logoApp_new.png'
+import logo from './calendar.png'
 const ViewPage = ({fontCol, bgCol}) => {
   return (
     <div>
     <div className='center-container'>
-<p style={{ height:"29px", color:fontCol }}>As a viewer,  you are unable to use the Loom Embed for monday.</p>
+<p style={{ height:"29px", color:fontCol }}>As a viewer,  you are unable to use the Google Calendar Integration for monday.</p>
 
 </div>
 <img className='viewimg' src={logo} style={{ height:"70px",width:"70px"}}></img>
