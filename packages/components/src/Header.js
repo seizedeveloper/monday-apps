@@ -18,9 +18,9 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   monday.setApiVersion("2023-10");
 
   const matchingSequence2=/(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
-
+  
   const defaultUrl = defaulturl;
-  const id = defaultUrl.match(matchingSequence2)[1];
+  const id = defaultUrl.match(matchingSequence2)?.[1];
   const defUrl = defaulturl;
 
   const [url, setUrl] = useState('');
@@ -43,9 +43,18 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedshowEdit, setStoredShowEdit] = useState("");
   const [storedisEditing, setStoredisEditing] = useState(false);
   const [cookieConsent, setCookieConsent] = useState(true); // Initially null to indicate not yet checked
-
+ var iscanva= false;
+ var isfigma=false;
+ if (dashUrl=='Canva'){
+  var iscanva = true;
+}
+if (dashUrl=='Figma'){
+  var isfigma=true;
+}
   // Load the stored cookie consent value when the app loads
   useEffect(() => {
+    
+    
     monday.storage.getItem('cookieConsent').then((res) => {
       const value = res.data?.value;
       console.log('Stored Cookie Consent:', value);
@@ -116,8 +125,15 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     if (storedurl) {
       setUrl(storedurl);
       const loomIdMatch = storedurl.match(matchingSequence);
-      if (loomIdMatch && loomIdMatch[1]) {
-        setEmbedUrl(`${decodePart1}${loomIdMatch[1]}${decodePart2 ?? ''}`);
+
+      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+        if( iscanva && loomIdMatch[2]){
+          const embedId = loomIdMatch[2];
+          setEmbedUrl(`https://www.canva.com/design/$${loomIdMatch[1]}/${embedId}/view?embed`);
+        }
+        else{
+          const id = loomIdMatch[1] || loomIdMatch[2];  
+        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);}
         setShowWarning(false);
       } else {
         // setShowWarning(true);
@@ -130,7 +146,8 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     else {
       setUrl(defaultUrl);
       const loomIdMatch = defaultUrl.match(matchingSequence2);
-      if (loomIdMatch && loomIdMatch[1]) {
+      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+        
         setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
         setShowWarning(false);
       } else {
@@ -178,8 +195,15 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       setIsEditing(storedisEditing);
       if (storedisEditing) {
         const loomIdMatch = url.match(matchingSequence);
-        if (loomIdMatch && loomIdMatch[1]) {
-          setEmbedUrl(`${decodePart1}${loomIdMatch[1]}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+        if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+          if( iscanva && loomIdMatch[2]){
+            const embedId = loomIdMatch[2];
+            setEmbedUrl(`https://www.canva.com/design/$${loomIdMatch[1]}/${embedId}/view?embed`);
+          }
+          else{
+            const id = loomIdMatch[1] || loomIdMatch[2];  
+        
+          setEmbedUrl(`${decodePart1}${id}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);}
         }
       }
     }
@@ -254,7 +278,8 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl.match(matchingSequence);
     if (loomIdMatch && loomIdMatch[1]) {
-      setEmbedUrl(`${decodePart1}${loomIdMatch[1]}${decodePart2 ?? ''}`);
+      const id = loomIdMatch[1] || loomIdMatch[2];  
+        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);
       // setShow(false);
       setShowWarning(false);
       setIsEditing(false);

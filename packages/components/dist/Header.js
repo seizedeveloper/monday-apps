@@ -20,6 +20,7 @@ function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; 
 //const Player = ( {fontCol, bgCol,defaulturl,matchingSequence,ifEditing,logo,appName,dashUrl,docLink} ) => {
 
 const Header = _ref => {
+  var _defaultUrl$match;
   let {
     fontCol,
     bgCol,
@@ -37,7 +38,7 @@ const Header = _ref => {
   monday.setApiVersion("2023-10");
   const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
   const defaultUrl = defaulturl;
-  const id = defaultUrl.match(matchingSequence2)[1];
+  const id = (_defaultUrl$match = defaultUrl.match(matchingSequence2)) === null || _defaultUrl$match === void 0 ? void 0 : _defaultUrl$match[1];
   const defUrl = defaulturl;
   const [url, setUrl] = (0, _react.useState)('');
   const [width, setWidth] = (0, _react.useState)(600);
@@ -59,7 +60,14 @@ const Header = _ref => {
   const [storedshowEdit, setStoredShowEdit] = (0, _react.useState)("");
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
   const [cookieConsent, setCookieConsent] = (0, _react.useState)(true); // Initially null to indicate not yet checked
-
+  var iscanva = false;
+  var isfigma = false;
+  if (dashUrl == 'Canva') {
+    var iscanva = true;
+  }
+  if (dashUrl == 'Figma') {
+    var isfigma = true;
+  }
   // Load the stored cookie consent value when the app loads
   (0, _react.useEffect)(() => {
     monday.storage.getItem('cookieConsent').then(res => {
@@ -129,8 +137,14 @@ const Header = _ref => {
     if (storedurl) {
       setUrl(storedurl);
       const loomIdMatch = storedurl.match(matchingSequence);
-      if (loomIdMatch && loomIdMatch[1]) {
-        setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1]).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+        if (iscanva && loomIdMatch[2]) {
+          const embedId = loomIdMatch[2];
+          setEmbedUrl("https://www.canva.com/design/$".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
+        } else {
+          const id = loomIdMatch[1] || loomIdMatch[2];
+          setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
+        }
         setShowWarning(false);
       } else {
         // setShowWarning(true);
@@ -140,7 +154,7 @@ const Header = _ref => {
     } else {
       setUrl(defaultUrl);
       const loomIdMatch = defaultUrl.match(matchingSequence2);
-      if (loomIdMatch && loomIdMatch[1]) {
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
         setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
         setShowWarning(false);
       } else {
@@ -181,8 +195,14 @@ const Header = _ref => {
       setIsEditing(storedisEditing);
       if (storedisEditing) {
         const loomIdMatch = url.match(matchingSequence);
-        if (loomIdMatch && loomIdMatch[1]) {
-          setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1], "/edit")) || setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
+        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+          if (iscanva && loomIdMatch[2]) {
+            const embedId = loomIdMatch[2];
+            setEmbedUrl("https://www.canva.com/design/$".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
+          } else {
+            const id = loomIdMatch[1] || loomIdMatch[2];
+            setEmbedUrl("".concat(decodePart1).concat(id, "/edit")) || setEmbedUrl("https://www.loom.com/embed/".concat(id, "?autoplay=false"));
+          }
         }
       }
     }
@@ -254,7 +274,8 @@ const Header = _ref => {
     // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl.match(matchingSequence);
     if (loomIdMatch && loomIdMatch[1]) {
-      setEmbedUrl("".concat(decodePart1).concat(loomIdMatch[1]).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
+      const id = loomIdMatch[1] || loomIdMatch[2];
+      setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
       // setShow(false);
       setShowWarning(false);
       setIsEditing(false);
