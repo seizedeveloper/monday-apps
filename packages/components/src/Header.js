@@ -209,37 +209,7 @@ if (dashUrl=='Figma'){
     }
   }, [storedisEditing]);
 
-  // useEffect(() => {
-  //   monday.listen("settings", res => {
-  //     console.log(res.data) ;
-  //     const settings = res.data ;
-  //     if(settings.url){
-  //       setUrl(settings.url) ;
-  //       setUrlSetting(true) ;
-  //       const inputUrl = settings.url ;
-  //       const loomIdMatch = inputUrl.match(/(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/);
-  //       if (loomIdMatch && loomIdMatch[1]) {
-  //         setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
-  //         // setShow(false);
-  //         setShowWarning(false);
-  //       } else {
-  //         setShowWarning(true);
-  //         setEmbedUrl(defUrl);
-  //       }
-  //       if (inputUrl === "") setShowWarning(false);
-  //     }
-  //     if(settings.width){
-  //       const value = parseInt(settings.width, 10);
-  //       setWidthSetting(true) ;
-  //       setWidth(value > 0 ? value : 600);
-  //     }
-  //     if(settings.height){
-  //       const value = parseInt(settings.height, 10);
-  //       setHeightSetting(true) ;
-  //       setHeight(value > 0 ? value : 400);
-  //     }
-  //   }) ;
-  // }) ;
+
   const resetTimeout = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
@@ -361,44 +331,7 @@ if (dashUrl=='Figma'){
       </div>)}
 
 
-      {/* {!submitted && (
-          <div style={{ display: "flex", justifyContent: "flex-start", width: "600px", marginTop: "20px" }}>
-            <label style={{ color: "#212529" }}>
-              Video URL:
-              <input
-                type="text"
-                value={url}
-                onChange={handleUrlChange}
-              />
-            </label>
-            <label style={{ color: "#212529" }}>
-              Width:
-              <input
-                type="number"
-                value={width}
-                onChange={handleWidthChange}
-                style={{ marginLeft: "10px" }}
-              />
-            </label>
-            <label style={{ color: "#212529" }}>
-              Height:
-              <input
-                type="number"
-                value={height}
-                onChange={handleHeightChange}
-                style={{ marginLeft: "10px" }}
-              />
-            </label>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => { if (!showWarning && url) { setSubmitted(true); setShow(false); } }}
-              style={{ height: "42px", marginTop: "36px", marginLeft: "80px", width: "100px" }}
-            >
-              Done
-            </button>
-          </div>
-        )} */}
+      
       {embedUrl && (
         <div
           onMouseEnter={() => {
