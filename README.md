@@ -11,9 +11,9 @@ Follow these steps to set up and start working with the monorepo:
 
 ### 1. Clone the Repository
 
-git clone <repository-url>
+git clone (repository-url)
 
-cd <repository-name>
+cd (repository-name)
 
 Clones the monorepo and navigates to the project directory.
 
@@ -34,7 +34,7 @@ Builds the shared component.
 
 ### 4. Start a Specific Package
 
-npm run start --workspace=<package-name>
+npm run start --workspace=(package-name)
 (For ex: npm run build --workspace=@npm-workspace-demo/app11)
 
 Starts the development server for the specified package.
