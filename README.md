@@ -31,6 +31,7 @@ Follow these steps to set up and start working with the monorepo:
 1. Clone the Repository
 
 git clone <repository-url>
+
 cd <repository-name>
 Clones the monorepo and navigates to the project directory.
 
