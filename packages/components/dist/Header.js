@@ -61,13 +61,10 @@ const Header = _ref => {
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
   const [cookieConsent, setCookieConsent] = (0, _react.useState)(true); // Initially null to indicate not yet checked
   var iscanva = false;
-  var isfigma = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
   }
-  if (dashUrl == 'Figma') {
-    var isfigma = true;
-  }
+
   // Load the stored cookie consent value when the app loads
   (0, _react.useEffect)(() => {
     monday.storage.getItem('cookieConsent').then(res => {
@@ -138,9 +135,9 @@ const Header = _ref => {
       setUrl(storedurl);
       const loomIdMatch = storedurl.match(matchingSequence);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-        if (iscanva && loomIdMatch[2]) {
+        if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
           const embedId = loomIdMatch[2];
-          setEmbedUrl("https://www.canva.com/design/$".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
+          setEmbedUrl("https://www.canva.com/design/".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
         } else {
           const id = loomIdMatch[1] || loomIdMatch[2];
           setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
@@ -198,7 +195,7 @@ const Header = _ref => {
         if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
           if (iscanva && loomIdMatch[2]) {
             const embedId = loomIdMatch[2];
-            setEmbedUrl("https://www.canva.com/design/$".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
+            setEmbedUrl("https://www.canva.com/design/".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
           } else {
             const id = loomIdMatch[1] || loomIdMatch[2];
             setEmbedUrl("".concat(decodePart1).concat(id, "/edit")) || setEmbedUrl("https://www.loom.com/embed/".concat(id, "?autoplay=false"));
@@ -207,38 +204,6 @@ const Header = _ref => {
       }
     }
   }, [storedisEditing]);
-
-  // useEffect(() => {
-  //   monday.listen("settings", res => {
-  //     console.log(res.data) ;
-  //     const settings = res.data ;
-  //     if(settings.url){
-  //       setUrl(settings.url) ;
-  //       setUrlSetting(true) ;
-  //       const inputUrl = settings.url ;
-  //       const loomIdMatch = inputUrl.match(/(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/);
-  //       if (loomIdMatch && loomIdMatch[1]) {
-  //         setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
-  //         // setShow(false);
-  //         setShowWarning(false);
-  //       } else {
-  //         setShowWarning(true);
-  //         setEmbedUrl(defUrl);
-  //       }
-  //       if (inputUrl === "") setShowWarning(false);
-  //     }
-  //     if(settings.width){
-  //       const value = parseInt(settings.width, 10);
-  //       setWidthSetting(true) ;
-  //       setWidth(value > 0 ? value : 600);
-  //     }
-  //     if(settings.height){
-  //       const value = parseInt(settings.height, 10);
-  //       setHeightSetting(true) ;
-  //       setHeight(value > 0 ? value : 400);
-  //     }
-  //   }) ;
-  // }) ;
   const resetTimeout = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
@@ -273,9 +238,14 @@ const Header = _ref => {
     // localStorage.setItem('url', inputUrl) ;
     // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl.match(matchingSequence);
-    if (loomIdMatch && loomIdMatch[1]) {
-      const id = loomIdMatch[1] || loomIdMatch[2];
-      setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
+    if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+      if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
+        const embedId = loomIdMatch[2];
+        setEmbedUrl("https://www.canva.com/design/".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
+      } else {
+        const id = loomIdMatch[1] || loomIdMatch[2];
+        setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
+      }
       // setShow(false);
       setShowWarning(false);
       setIsEditing(false);

@@ -44,13 +44,10 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedisEditing, setStoredisEditing] = useState(false);
   const [cookieConsent, setCookieConsent] = useState(true); // Initially null to indicate not yet checked
  var iscanva= false;
- var isfigma=false;
  if (dashUrl=='Canva'){
   var iscanva = true;
 }
-if (dashUrl=='Figma'){
-  var isfigma=true;
-}
+
   // Load the stored cookie consent value when the app loads
   useEffect(() => {
     
@@ -127,9 +124,9 @@ if (dashUrl=='Figma'){
       const loomIdMatch = storedurl.match(matchingSequence);
 
       if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
-        if( iscanva && loomIdMatch[2]){
+        if( iscanva && loomIdMatch[2] && loomIdMatch[1]){
           const embedId = loomIdMatch[2];
-          setEmbedUrl(`https://www.canva.com/design/$${loomIdMatch[1]}/${embedId}/view?embed`);
+          setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
         }
         else{
           const id = loomIdMatch[1] || loomIdMatch[2];  
@@ -198,7 +195,7 @@ if (dashUrl=='Figma'){
         if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
           if( iscanva && loomIdMatch[2]){
             const embedId = loomIdMatch[2];
-            setEmbedUrl(`https://www.canva.com/design/$${loomIdMatch[1]}/${embedId}/view?embed`);
+            setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
           }
           else{
             const id = loomIdMatch[1] || loomIdMatch[2];  
@@ -247,9 +244,15 @@ if (dashUrl=='Figma'){
     // localStorage.setItem('url', inputUrl) ;
     // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl.match(matchingSequence);
-    if (loomIdMatch && loomIdMatch[1]) {
+    if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+
+      if( iscanva && loomIdMatch[2] && loomIdMatch[1]){
+        const embedId = loomIdMatch[2];
+        setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
+      }
+      else{
       const id = loomIdMatch[1] || loomIdMatch[2];  
-        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);
+        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);}
       // setShow(false);
       setShowWarning(false);
       setIsEditing(false);
