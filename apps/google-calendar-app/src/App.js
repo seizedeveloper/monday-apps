@@ -63,7 +63,7 @@ const App = () => {
 
   var appName = 'Google Calendar Integration for monday';
   var dashUrl = 'Google Calendar';
-  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var docLink = "https://satisfactiondrivers.com/google-calendar-documentation";
   var decodePart1 = 'https://calendar.google.com/calendar/embed?src=';
   var decodePart2 = null;
 

@@ -63,7 +63,7 @@ const App = () => {
 
   var appName = 'Looker Studio Integration for monday';
   var dashUrl = 'Looker Studio';
-  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var docLink = "https://satisfactiondrivers.com/looker-documentation";
   var decodePart1 = 'https://lookerstudio.google.com/embed/reporting/';
   var decodePart2 = '/page/qgR';
 

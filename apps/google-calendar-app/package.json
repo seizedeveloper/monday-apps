@@ -1,5 +1,5 @@
 {
-  "name": "@npm-workspace-demo/app2",
+  "name": "@npm-workspace-demo/app4",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

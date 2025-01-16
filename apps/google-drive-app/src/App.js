@@ -63,7 +63,7 @@ const App = () => {
 
   var appName = 'Google Drive Embed for monday';
   var dashUrl = 'Google Drive';
-  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var docLink = "https://satisfactiondrivers.com/google-drive-documentation";
   var decodePart1 = 'https://drive.google.com/file/d/';
   var decodePart2 = '/preview';
 

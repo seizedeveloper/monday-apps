@@ -63,7 +63,7 @@ const App = () => {
 
   var appName = 'Google Form Integration for monday';
   var dashUrl = 'Google Form';
-  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var docLink = "https://satisfactiondrivers.com/google-forms-documentation";
   var decodePart1 = 'https://docs.google.com/forms/d/e/';
   var decodePart2 = '/viewform?embedded=true';
 

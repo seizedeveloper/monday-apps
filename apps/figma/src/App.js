@@ -63,7 +63,7 @@ const App = () => {
 
   var appName = 'Figma Embed for monday';
   var dashUrl = 'Figma';
-  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var docLink = "https://satisfactiondrivers.com/figma-documentation";
   var decodePart1 = 'https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/';
   var decodePart2 = null;
 

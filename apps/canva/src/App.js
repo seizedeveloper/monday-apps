@@ -3,7 +3,7 @@ import ViewPage from './viewPage';
 import mondaySdk from 'monday-sdk-js';
 import { Header } from "@npm-workspace-demo/components"
 // import { Header } from "/packages/components/src/index.js"
-import logo from './canva.png';
+import logo from './can.png';
 const App = () => {
   const [url, setUrl] = useState('');
   const [inputUrl, setInputUrl] = useState('');
@@ -63,7 +63,7 @@ const App = () => {
 
   var appName = 'Canva Integration for monday';
   var dashUrl = 'Canva';
-  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var docLink = "https://satisfactiondrivers.com/canva-documentation";
   var decodePart1 = 'https://www.canva.com/design/'
   var decodePart2 = '/view?embed';
  

@@ -63,7 +63,7 @@ const App = () => {
 
   var appName = 'Google Docs Integration for monday';
   var dashUrl = 'Google docs';
-  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var docLink = "https://satisfactiondrivers.com/google-doc-documentation";
   var decodePart1 = 'https://docs.google.com/document/d/';
   var decodePart2 = '/preview';
 

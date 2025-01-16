@@ -63,7 +63,7 @@ const App = () => {
 
   var appName = 'Google Slides Integration for monday';
   var dashUrl = 'Google Slides';
-  var docLink = "https://satisfactiondrivers.com/loom-integration-for-monday-documentation";
+  var docLink = "https://satisfactiondrivers.com/google-slides-documentation";
   var decodePart1 = 'https://docs.google.com/presentation/d/';
   var decodePart2 = '/embed?start=false&loop=false&delayms=3000';
 

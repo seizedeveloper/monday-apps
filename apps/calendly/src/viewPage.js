@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import logo from './can.png'
+import logo from './calendly.png'
 const ViewPage = ({fontCol, bgCol}) => {
   return (
     <div>
     <div className='center-container'>
-<p style={{ height:"29px", color:fontCol }}>As a viewer,  you are unable to use the Canva Integration for monday.</p>
+<p style={{ height:"29px", color:fontCol }}>As a viewer,  you are unable to use the Calendly Integration for monday.</p>
 
 </div>
 <img className='viewimg' src={logo} style={{ height:"70px",width:"70px"}}></img>

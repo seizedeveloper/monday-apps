@@ -3,7 +3,7 @@ import ViewPage from './viewPage';
 import mondaySdk from 'monday-sdk-js';
 import { Header } from "@npm-workspace-demo/components"
 // import { Header } from "/packages/components/src/index.js"
-import logo from './trello.png';
+import logo from './calendly.png';
 const App = () => {
   const [url, setUrl] = useState('');
   const [inputUrl, setInputUrl] = useState('');
@@ -58,14 +58,15 @@ const App = () => {
 
   // var isViewOnly = false;
   var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
-  var matchingSequence = /b\/([a-zA-Z0-9-_]+)/;
+  var matchingSequence =/calendly\.com\/([a-zA-Z0-9_-]+)/;
   var ifEditing = true;
 
-  var appName = 'Trello Integration for monday';
-  var dashUrl = 'Trello';
-  var docLink = "https://satisfactiondrivers.com/trello-documentation";
-  var decodePart1 = 'https://trello.com/b/';
-  var decodePart2 = '.html';
+  var appName = 'Calendly Integration for monday';
+  var dashUrl = 'Calendly';
+  var docLink = "https://satisfactiondrivers.com/calendly-documentation";
+  var decodePart1 = 'https://calendly.com/'
+  var decodePart2 =null;
+ 
 
   const handleInputChange = (event) => {
     setInputUrl(event.target.value);
@@ -85,7 +86,7 @@ const App = () => {
         ) : (
           <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
            ifEditing={ifEditing} logo={logo} appName={appName} 
-          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} />
+          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2}/>
         )}
 
 
