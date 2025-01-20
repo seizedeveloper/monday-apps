@@ -41,7 +41,7 @@ Starts the development server for the specified package.
 
 ### 5. Build a specific app
 
-npm run build --workspace=<package-name>
+npm run build --workspace=[package-name]
 
 Builds the specific app.
 
