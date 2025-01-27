@@ -38,7 +38,7 @@ const Header = _ref => {
   monday.setApiVersion("2023-10");
   const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
   const defaultUrl = defaulturl;
-  const id = (_defaultUrl$match = defaultUrl.match(matchingSequence2)) === null || _defaultUrl$match === void 0 ? void 0 : _defaultUrl$match[1];
+  const id = defaultUrl === null || defaultUrl === void 0 || (_defaultUrl$match = defaultUrl.match(matchingSequence2)) === null || _defaultUrl$match === void 0 ? void 0 : _defaultUrl$match[1];
   const defUrl = defaulturl;
   const [url, setUrl] = (0, _react.useState)('');
   const [width, setWidth] = (0, _react.useState)(600);
@@ -133,7 +133,7 @@ const Header = _ref => {
   (0, _react.useEffect)(() => {
     if (storedurl) {
       setUrl(storedurl);
-      const loomIdMatch = storedurl.match(matchingSequence);
+      const loomIdMatch = storedurl === null || storedurl === void 0 ? void 0 : storedurl.match(matchingSequence);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
         if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
           const embedId = loomIdMatch[2];
@@ -150,7 +150,7 @@ const Header = _ref => {
       monday.execute('valueCreatedForUser'); // Value-created event when URL is successfully set
     } else {
       setUrl(defaultUrl);
-      const loomIdMatch = defaultUrl.match(matchingSequence2);
+      const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
         setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
         setShowWarning(false);
@@ -191,7 +191,7 @@ const Header = _ref => {
     if (storedisEditing) {
       setIsEditing(storedisEditing);
       if (storedisEditing) {
-        const loomIdMatch = url.match(matchingSequence);
+        const loomIdMatch = url === null || url === void 0 ? void 0 : url.match(matchingSequence);
         if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
           if (iscanva && loomIdMatch[2]) {
             const embedId = loomIdMatch[2];
@@ -237,7 +237,7 @@ const Header = _ref => {
     monday.storage.instance.setItem("url", inputUrl);
     // localStorage.setItem('url', inputUrl) ;
     // setUrlSetting(false) ; 
-    const loomIdMatch = inputUrl.match(matchingSequence);
+    const loomIdMatch = inputUrl === null || inputUrl === void 0 ? void 0 : inputUrl.match(matchingSequence);
     if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
       if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
         const embedId = loomIdMatch[2];
@@ -282,12 +282,12 @@ const Header = _ref => {
     setIsEditing(newEditMode);
     monday.storage.instance.setItem("isEditing", newEditMode);
     if (newEditMode) {
-      const slideIdMatch = url.match(matchingSequence);
+      const slideIdMatch = url === null || url === void 0 ? void 0 : url.match(matchingSequence);
       if (slideIdMatch && slideIdMatch[1]) {
         setEmbedUrl("".concat(decodePart1).concat(slideIdMatch[1], "/edit"));
       }
     } else {
-      const slideIdMatch = url.match(matchingSequence);
+      const slideIdMatch = url === null || url === void 0 ? void 0 : url.match(matchingSequence);
       if (slideIdMatch && slideIdMatch[1]) {
         setEmbedUrl("".concat(decodePart1).concat(slideIdMatch[1], "/preview"));
       }
