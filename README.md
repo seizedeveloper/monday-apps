@@ -32,14 +32,21 @@ npm run build --workspace=@npm-workspace-demo/components
 
 Builds the shared component.
 
-### 4. Start a Specific Package
+### 4. Install the common component in a particular app
+
+npm install @npm-workspace-demo/components --workspace=[package-name]
+(For ex: npm install @npm-workspace-demo/components--workspace=@npm-workspace-demo/app11)
+
+Installs the common component dependencies and imports in the app.
+
+### 5. Start a Specific Package
 
 npm run start --workspace=[package-name]
 (For ex: npm run build --workspace=@npm-workspace-demo/app11)
 
 Starts the development server for the specified package.
 
-### 5. Build a specific app
+### 6. Build a specific app
 
 npm run build --workspace=[package-name]
 
