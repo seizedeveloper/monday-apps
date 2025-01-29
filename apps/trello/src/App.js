@@ -59,9 +59,9 @@ const App = () => {
   // var isViewOnly = false;
   var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
   var matchingSequence = /b\/([a-zA-Z0-9-_]+)/;
-  var ifEditing = true;
+  var ifEditing = false;
 
-  var appName = 'Trello Integration for monday';
+  var appName = 'Trello Embed for monday.com';
   var dashUrl = 'Trello';
   var docLink = "https://satisfactiondrivers.com/trello-documentation";
   var decodePart1 = 'https://trello.com/b/';
