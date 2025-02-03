@@ -312,7 +312,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         <div className="cookie-overlay">
           <div className="cookie-content">
             <h1>Cookie Consent</h1>
-            <p> We use cookies to enhance your user experience. By using our website,
+            <p> We use cookies to enhance your user experience. By using our app,
               you agree to our use of cookies.{" "}</p>
             <p><a href={"https://policies.google.com/technologies/cookies?hl=en-US"}>Learn more.</a></p>
             <button className="accept-button" onClick={handleAccept}>
