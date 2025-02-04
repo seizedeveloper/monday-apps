@@ -297,7 +297,7 @@ const Header = _ref => {
     className: "cookie-overlay"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "cookie-content"
-  }, /*#__PURE__*/_react.default.createElement("h1", null, "Cookie Consent"), /*#__PURE__*/_react.default.createElement("p", null, " We use cookies to enhance your user experience. By using our website, you agree to our use of cookies.", " "), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("a", {
+  }, /*#__PURE__*/_react.default.createElement("h1", null, "Cookie Consent"), /*#__PURE__*/_react.default.createElement("p", null, " We use cookies to enhance your user experience. By using our app, you agree to our use of cookies.", " "), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("a", {
     href: "https://policies.google.com/technologies/cookies?hl=en-US"
   }, "Learn more.")), /*#__PURE__*/_react.default.createElement("button", {
     className: "accept-button",
