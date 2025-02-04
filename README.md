@@ -50,6 +50,7 @@ npm install @npm-workspace-demo/components --workspace=[package-name]
 (For ex: npm install @npm-workspace-demo/components--workspace=@npm-workspace-demo/app11)
 
 Installs the common component dependencies and imports in the app.
+This step is not mandatory if you build or start an app as the common component gets automatically installed in the app since it is mentioned in the package.json dependency of apps.If it is not there while building an app from scratch then this step is needed.
 
 ### 7. Start a Specific Package
 
