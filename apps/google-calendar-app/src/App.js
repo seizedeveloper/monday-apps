@@ -61,7 +61,7 @@ const App = () => {
   var matchingSequence = /(?:calendar\.google\.com\/calendar\/(?:u\/\d+\/)?embed\?src=)([^&]+)/;
   var ifEditing = true;
 
-  var appName = 'Google Calendar Integration for monday';
+  var appName = 'Google Calendar for monday';
   var dashUrl = 'Google Calendar';
   var docLink = "https://satisfactiondrivers.com/google-calendar-documentation";
   var decodePart1 = 'https://calendar.google.com/calendar/embed?src=';

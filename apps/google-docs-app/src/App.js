@@ -61,7 +61,7 @@ const App = () => {
   var matchingSequence = /\/d\/([a-zA-Z0-9-_]+)/;
   var ifEditing = true;
 
-  var appName = 'Google Docs Integration for monday';
+  var appName = 'Google Docs Embed for monday';
   var dashUrl = 'Google docs';
   var docLink = "https://satisfactiondrivers.com/google-doc-documentation";
   var decodePart1 = 'https://docs.google.com/document/d/';

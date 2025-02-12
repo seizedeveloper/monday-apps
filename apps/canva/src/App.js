@@ -61,7 +61,7 @@ const App = () => {
   var matchingSequence = /design\/([a-zA-Z0-9-_]+)\/([a-zA-Z0-9-_]+)/;
   var ifEditing = true;
 
-  var appName = 'Embed Canva for monday.com';
+  var appName = 'Canva Embedder for monday.com';
   var dashUrl = 'Canva';
   var docLink = "https://satisfactiondrivers.com/canva-documentation";
   var decodePart1 = 'https://www.canva.com/design/'
