@@ -57,7 +57,7 @@ const App = () => {
 
 
   // var isViewOnly = false;
-  var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
+  var defaulturl = 'https://www.loom.com/share/4cdd4d3b88af470cad7e14b151949afd?sid=7b21bf57-5d23-4412-a23e-b407230d9037';
   var matchingSequence = /b\/([a-zA-Z0-9-_]+)/;
   var ifEditing = false;
 
@@ -66,6 +66,7 @@ const App = () => {
   var docLink = "https://satisfactiondrivers.com/trello-documentation";
   var decodePart1 = 'https://trello.com/b/';
   var decodePart2 = '.html';
+  var cookiepolicy='https://trello.com/legal/security/';
 
   const handleInputChange = (event) => {
     setInputUrl(event.target.value);
@@ -85,7 +86,7 @@ const App = () => {
         ) : (
           <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
            ifEditing={ifEditing} logo={logo} appName={appName} 
-          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} />
+          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} cookiepolicy={cookiepolicy} />
         )}
 
 
