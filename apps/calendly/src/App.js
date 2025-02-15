@@ -66,6 +66,7 @@ const App = () => {
   var docLink = "https://satisfactiondrivers.com/calendly-documentation";
   var decodePart1 = 'https://calendly.com/'
   var decodePart2 =null;
+  var cookiepolicy='https://policies.google.com/privacy'
  
 
   const handleInputChange = (event) => {
@@ -86,7 +87,7 @@ const App = () => {
         ) : (
           <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
            ifEditing={ifEditing} logo={logo} appName={appName} 
-          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2}/>
+          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} cookiepolicy={cookiepolicy}/>
         )}
 
 

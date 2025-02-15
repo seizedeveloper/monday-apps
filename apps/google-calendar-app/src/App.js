@@ -66,6 +66,7 @@ const App = () => {
   var docLink = "https://satisfactiondrivers.com/google-calendar-documentation";
   var decodePart1 = 'https://calendar.google.com/calendar/embed?src=';
   var decodePart2 = null;
+  var cookiepolicy='https://policies.google.com/privacy'
 
   const handleInputChange = (event) => {
     setInputUrl(event.target.value);
@@ -85,7 +86,7 @@ const App = () => {
         ) : (
           <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
            ifEditing={ifEditing} logo={logo} appName={appName} 
-          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} />
+          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} cookiepolicy={cookiepolicy} />
         )}
 
 

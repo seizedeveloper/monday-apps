@@ -66,7 +66,7 @@ const App = () => {
   var docLink = "https://satisfactiondrivers.com/canva-documentation";
   var decodePart1 = 'https://www.canva.com/design/'
   var decodePart2 = '/view?embed';
- 
+  var cookiepolicy='https://policies.google.com/privacy'
 
   const handleInputChange = (event) => {
     setInputUrl(event.target.value);
@@ -86,7 +86,7 @@ const App = () => {
         ) : (
           <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
            ifEditing={ifEditing} logo={logo} appName={appName} 
-          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2}/>
+          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} cookiepolicy={cookiepolicy}/>
         )}
 
 
