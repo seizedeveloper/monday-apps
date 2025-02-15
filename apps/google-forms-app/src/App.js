@@ -57,7 +57,7 @@ const App = () => {
 
 
   // var isViewOnly = false;
-  var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
+  var defaulturl = 'https://www.loom.com/share/de6cfdfa850d41fc939241cf4cb0a243?sid=30edb307-8adb-49f5-b289-28dbdd3eb049';
   var matchingSequence = /\/d\/e\/([^\/]+)/;
   var ifEditing = false;
 
@@ -66,6 +66,7 @@ const App = () => {
   var docLink = "https://satisfactiondrivers.com/google-forms-documentation";
   var decodePart1 = 'https://docs.google.com/forms/d/e/';
   var decodePart2 = '/viewform?embedded=true';
+  var cookiepolicy='https://policies.google.com/privacy'
 
   const handleInputChange = (event) => {
     setInputUrl(event.target.value);
@@ -85,7 +86,7 @@ const App = () => {
         ) : (
           <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
            ifEditing={ifEditing} logo={logo} appName={appName} 
-          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} />
+          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} cookiepolicy={cookiepolicy} />
         )}
 
 
