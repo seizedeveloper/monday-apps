@@ -59,7 +59,7 @@ const App = () => {
   // var isViewOnly = false;
   var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
   var matchingSequence = /\/d\/e\/([^\/]+)/;
-  var ifEditing = true;
+  var ifEditing = false;
 
   var appName = 'Google Form Integration for monday';
   var dashUrl = 'Google Form';
