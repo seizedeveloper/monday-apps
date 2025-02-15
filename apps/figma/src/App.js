@@ -57,7 +57,7 @@ const App = () => {
 
 
   // var isViewOnly = false;
-  var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
+  var defaulturl = 'https://www.loom.com/share/6479cf98fb6f4a70a15dd3409d3e359e?sid=b69958cf-0793-4e05-b27a-195dbf1632eb';
   var matchingSequence = /file\/([a-zA-Z0-9-_]+)|design\/([a-zA-Z0-9-_]+)/;
   var ifEditing = false;
 
@@ -66,6 +66,7 @@ const App = () => {
   var docLink = "https://satisfactiondrivers.com/figma-documentation";
   var decodePart1 = 'https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/';
   var decodePart2 = null;
+  var cookiepolicy='https://www.figma.com/legal/privacy/';
 
   const handleInputChange = (event) => {
     setInputUrl(event.target.value);
@@ -85,7 +86,7 @@ const App = () => {
         ) : (
           <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
            ifEditing={ifEditing} logo={logo} appName={appName} 
-          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} />
+          dashUrl={dashUrl} docLink={docLink} decodePart1={decodePart1} decodePart2={decodePart2} cookiepolicy={cookiepolicy} />
         )}
 
 
