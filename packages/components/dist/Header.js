@@ -32,7 +32,8 @@ const Header = _ref => {
     dashUrl,
     docLink,
     decodePart1,
-    decodePart2
+    decodePart2,
+    cookiepolicy
   } = _ref;
   const monday = (0, _mondaySdkJs.default)();
   monday.setApiVersion("2023-10");
@@ -298,7 +299,7 @@ const Header = _ref => {
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "cookie-content"
   }, /*#__PURE__*/_react.default.createElement("h1", null, "Cookie Consent"), /*#__PURE__*/_react.default.createElement("p", null, " We use cookies to enhance your user experience. By using our app, you agree to our use of cookies.", " "), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("a", {
-    href: "https://policies.google.com/technologies/cookies?hl=en-US"
+    href: cookiepolicy
   }, "Learn more.")), /*#__PURE__*/_react.default.createElement("button", {
     className: "accept-button",
     onClick: handleAccept

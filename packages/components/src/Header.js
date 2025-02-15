@@ -12,7 +12,7 @@ import mondaySdk from 'monday-sdk-js';
 //const Player = ( {fontCol, bgCol,defaulturl,matchingSequence,ifEditing,logo,appName,dashUrl,docLink} ) => {
 
 
-const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo, appName, dashUrl, docLink, decodePart1,decodePart2 }) => {
+const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo, appName, dashUrl, docLink, decodePart1,decodePart2, cookiepolicy }) => {
 
   const monday = mondaySdk();
   monday.setApiVersion("2023-10");
@@ -314,7 +314,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
             <h1>Cookie Consent</h1>
             <p> We use cookies to enhance your user experience. By using our app,
               you agree to our use of cookies.{" "}</p>
-            <p><a href={"https://policies.google.com/technologies/cookies?hl=en-US"}>Learn more.</a></p>
+            <p><a href={cookiepolicy} >Learn more.</a></p>
             <button className="accept-button" onClick={handleAccept}>
               Accept Cookies
             </button>
