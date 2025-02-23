@@ -55,7 +55,7 @@ This step is not mandatory if you build or start an app as the common component 
 ### 7. Start a Specific Package
 
 npm run start --workspace=[package-name]
-(For ex: npm run build --workspace=@npm-workspace-demo/app11)
+(For ex: npm run start --workspace=@npm-workspace-demo/app11)
 
 Starts the development server for the specified package.
 
