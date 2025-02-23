@@ -252,13 +252,29 @@ const Header = _ref => {
       setIsEditing(false);
       setIsValidUrl(true);
     } else {
+      const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+        setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
+        setShowWarning(false);
+      } else {
+        setShowWarning(true);
+        setEmbedUrl(defUrl);
+      }
+      // setEmbedUrl(defUrl);
       setShowWarning(true);
-      setIsValidUrl(false);
-      setEmbedUrl(defUrl);
+      // setIsValidUrl(false);
     }
     if (inputUrl === "") {
-      setShowWarning(false);
-      setIsValidUrl(false);
+      const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+        setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
+        setShowWarning(false);
+      } else {
+        setShowWarning(true);
+        setEmbedUrl(defUrl);
+      }
+      // setShowWarning(false);
+      // setIsValidUrl(false);
       monday.storage.instance.setItem("url", defUrl);
     }
   };

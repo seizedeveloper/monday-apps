@@ -244,6 +244,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     // localStorage.setItem('url', inputUrl) ;
     // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl?.match(matchingSequence);
+    
     if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
 
       if( iscanva && loomIdMatch[2] && loomIdMatch[1]){
@@ -258,13 +259,33 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       setIsEditing(false);
       setIsValidUrl(true);
     } else {
+
+      const loomIdMatch = defaultUrl?.match(matchingSequence2);
+      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+        
+        setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+        setShowWarning(false);
+      } else {
+        setShowWarning(true);
+        setEmbedUrl(defUrl);
+      }
+      // setEmbedUrl(defUrl);
       setShowWarning(true);
-      setIsValidUrl(false);
-      setEmbedUrl(defUrl);
+      // setIsValidUrl(false);
+      
     }
     if (inputUrl === "") {
-      setShowWarning(false);
-      setIsValidUrl(false);
+      const loomIdMatch = defaultUrl?.match(matchingSequence2);
+      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+        
+        setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+        setShowWarning(false);
+      } else {
+        setShowWarning(true);
+        setEmbedUrl(defUrl);
+      }
+      // setShowWarning(false);
+      // setIsValidUrl(false);
       monday.storage.instance.setItem("url", defUrl);
     }
   };
