@@ -12,13 +12,13 @@ import mondaySdk from 'monday-sdk-js';
 //const Player = ( {fontCol, bgCol,defaulturl,matchingSequence,ifEditing,logo,appName,dashUrl,docLink} ) => {
 
 
-const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo, appName, dashUrl, docLink, decodePart1,decodePart2, cookiepolicy }) => {
+const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo, appName, dashUrl, docLink, decodePart1, decodePart2, cookiepolicy }) => {
 
   const monday = mondaySdk();
   monday.setApiVersion("2023-10");
 
-  const matchingSequence2=/(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
-  
+  const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
+
   const defaultUrl = defaulturl;
   const id = defaultUrl?.match(matchingSequence2)?.[1];
   const defUrl = defaulturl;
@@ -43,15 +43,15 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedshowEdit, setStoredShowEdit] = useState("");
   const [storedisEditing, setStoredisEditing] = useState(false);
   const [cookieConsent, setCookieConsent] = useState(true); // Initially null to indicate not yet checked
- var iscanva= false;
- if (dashUrl=='Canva'){
-  var iscanva = true;
-}
+  var iscanva = false;
+  if (dashUrl == 'Canva') {
+    var iscanva = true;
+  }
 
   // Load the stored cookie consent value when the app loads
   useEffect(() => {
-    
-    
+
+
     monday.storage.getItem('cookieConsent').then((res) => {
       const value = res.data?.value;
       console.log('Stored Cookie Consent:', value);
@@ -107,34 +107,45 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       console.log(value);
       setStoredShowEdit(value ?? false);
     });
-    if(ifEditing){
-    monday.storage.instance.getItem('isEditing').then(res => {
-      const value = res.data?.value;
-      console.log(value);
-      setStoredisEditing(value ?? false);
-    });}
+    if (ifEditing) {
+      monday.storage.instance.getItem('isEditing').then(res => {
+        const value = res.data?.value;
+        console.log(value);
+        setStoredisEditing(value ?? false);
+      });
+    }
     monday.execute('valueCreatedForUser');  // Value-created event when loading saved state
   }, []);
 
 
 
   useEffect(() => {
-    if (storedurl) {
+    if (storedurl !== '' && storedurl !== defUrl) {
       setUrl(storedurl);
       const loomIdMatch = storedurl?.match(matchingSequence);
 
-      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
-        if( iscanva && loomIdMatch[2] && loomIdMatch[1]){
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+        if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
           const embedId = loomIdMatch[2];
           setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
         }
-        else{
-          const id = loomIdMatch[1] || loomIdMatch[2];  
-        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);}
+        else {
+          const id = loomIdMatch[1] || loomIdMatch[2];
+          setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);
+        }
         setShowWarning(false);
       } else {
-        // setShowWarning(true);
-        setEmbedUrl(defUrl);
+        setShowWarning(true);
+        
+        const loomIdMatch = defaultUrl?.match(matchingSequence2);
+        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+
+          setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+          
+        } else {
+          setShowWarning(true);
+          setEmbedUrl(defUrl);
+        }
       }
 
       monday.execute('valueCreatedForUser');  // Value-created event when URL is successfully set
@@ -143,8 +154,8 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     else {
       setUrl(defaultUrl);
       const loomIdMatch = defaultUrl?.match(matchingSequence2);
-      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
-        
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+
         setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
         setShowWarning(false);
       } else {
@@ -182,7 +193,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   useEffect(() => {
     if (storedshowEdit) {
-      setShowEdit(storedshowEdit); 
+      setShowEdit(storedshowEdit);
       monday.execute('valueCreatedForUser');  // Value-created event when edit mode is accessed
     }
   }, [storedshowEdit]);
@@ -192,15 +203,16 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       setIsEditing(storedisEditing);
       if (storedisEditing) {
         const loomIdMatch = url?.match(matchingSequence);
-        if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
-          if( iscanva && loomIdMatch[2]){
+        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+          if (iscanva && loomIdMatch[2]) {
             const embedId = loomIdMatch[2];
             setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
           }
-          else{
-            const id = loomIdMatch[1] || loomIdMatch[2];  
-        
-          setEmbedUrl(`${decodePart1}${id}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);}
+          else {
+            const id = loomIdMatch[1] || loomIdMatch[2];
+
+            setEmbedUrl(`${decodePart1}${id}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);
+          }
         }
       }
     }
@@ -244,16 +256,17 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     // localStorage.setItem('url', inputUrl) ;
     // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl?.match(matchingSequence);
-    
-    if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
 
-      if( iscanva && loomIdMatch[2] && loomIdMatch[1]){
+    if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+
+      if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
         const embedId = loomIdMatch[2];
         setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
       }
-      else{
-      const id = loomIdMatch[1] || loomIdMatch[2];  
-        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);}
+      else {
+        const id = loomIdMatch[1] || loomIdMatch[2];
+        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);
+      }
       // setShow(false);
       setShowWarning(false);
       setIsEditing(false);
@@ -261,8 +274,8 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     } else {
 
       const loomIdMatch = defaultUrl?.match(matchingSequence2);
-      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
-        
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+
         setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
         setShowWarning(false);
       } else {
@@ -272,12 +285,12 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       // setEmbedUrl(defUrl);
       setShowWarning(true);
       // setIsValidUrl(false);
-      
+
     }
     if (inputUrl === "") {
       const loomIdMatch = defaultUrl?.match(matchingSequence2);
-      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
-        
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+
         setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
         setShowWarning(false);
       } else {
@@ -346,7 +359,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
 
 
-      { (<div className="company">
+      {(<div className="company">
         <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px" }} />
         <div className="name" >
           <b><span style={{ height: "19px", color: fontCol }}>{appName}</span></b>
@@ -355,7 +368,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       </div>)}
 
 
-      
+
       {embedUrl && (
         <div
           onMouseEnter={() => {
@@ -404,7 +417,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
         </div>
       )}
-      
+
       {ifEditing && show && !showWarning && (embedUrl != defUrl) && (<>
         <button
           type="button"
@@ -602,7 +615,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         </div>
       )}
 
-      { (<div className="details">
+      {(<div className="details">
         <div className="info">
           <div >
             <h4 style={{ textAlign: "left", height: "36px" }}>Additional information</h4>

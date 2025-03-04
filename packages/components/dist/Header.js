@@ -132,7 +132,7 @@ const Header = _ref => {
     monday.execute('valueCreatedForUser'); // Value-created event when loading saved state
   }, []);
   (0, _react.useEffect)(() => {
-    if (storedurl) {
+    if (storedurl !== '' && storedurl !== defUrl) {
       setUrl(storedurl);
       const loomIdMatch = storedurl === null || storedurl === void 0 ? void 0 : storedurl.match(matchingSequence);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
@@ -145,8 +145,14 @@ const Header = _ref => {
         }
         setShowWarning(false);
       } else {
-        // setShowWarning(true);
-        setEmbedUrl(defUrl);
+        setShowWarning(true);
+        const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
+        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+          setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
+        } else {
+          setShowWarning(true);
+          setEmbedUrl(defUrl);
+        }
       }
       monday.execute('valueCreatedForUser'); // Value-created event when URL is successfully set
     } else {
