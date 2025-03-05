@@ -61,8 +61,8 @@ const App = () => {
   var matchingSequence = /\/d\/e\/([^\/]+)/;
   var ifEditing = false;
 
-  var appName = 'Google Form Integration for monday';
-  var dashUrl = 'Google Form';
+  var appName = 'Google Forms Integration for monday.com';
+  var dashUrl = 'Google Forms';
   var docLink = "https://satisfactiondrivers.com/google-forms-documentation";
   var decodePart1 = 'https://docs.google.com/forms/d/e/';
   var decodePart2 = '/viewform?embedded=true';
