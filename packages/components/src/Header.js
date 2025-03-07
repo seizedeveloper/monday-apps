@@ -387,8 +387,8 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
           <iframe
             ref={iframeRef}
             src={embedUrl}
-            width={width > 0 ? width : 600}
-            height={height > 0 ? height : 400}
+            width={width>600? width:600}
+            height={height>400? height:400}
             frameBorder="0"
             allowFullScreen
             title="Video Player"
