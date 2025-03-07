@@ -368,8 +368,8 @@ const Header = _ref => {
   }, /*#__PURE__*/_react.default.createElement("iframe", {
     ref: iframeRef,
     src: embedUrl,
-    width: width > 0 ? width : 600,
-    height: height > 0 ? height : 400,
+    width: width > 600 ? width : 600,
+    height: height > 400 ? height : 400,
     frameBorder: "0",
     allowFullScreen: true,
     title: "Video Player",
