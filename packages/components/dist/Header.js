@@ -369,7 +369,9 @@ const Header = _ref => {
     alt: "Company logo",
     style: {
       height: "50px",
-      width: "50px"
+      width: "50px",
+      position: "absolute",
+      left: "0px"
     }
   }), /*#__PURE__*/_react.default.createElement("div", {
     className: "name"

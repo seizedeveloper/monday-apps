@@ -399,7 +399,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
 
       {(<div className="company">
-        <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px" }} />
+        <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px", position:"absolute", left:"0px" }} />
         <div className="name" >
           <b><span style={{ height: "19px", color: fontCol }}>{appName}</span></b>
           <span style={{ height: "16px", textAlign: "left", color: fontCol }}> by Satisfaction Drivers</span>
