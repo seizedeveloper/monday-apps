@@ -42,22 +42,23 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedsubmitted, setStoredSubmitted] = useState("");
   const [storedshowEdit, setStoredShowEdit] = useState("");
   const [storedisEditing, setStoredisEditing] = useState(false);
-  const [cookieConsent, setCookieConsent] = useState(true); // Initially null to indicate not yet checked
+  const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
+
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
   }
+ 
+ // Load the stored cookie consent value when the app loads
+ useEffect(() => {
 
-  // Load the stored cookie consent value when the app loads
-  useEffect(() => {
 
-
-    monday.storage.getItem('cookieConsent').then((res) => {
-      const value = res.data?.value;
-      console.log('Stored Cookie Consent:', value);
-      setCookieConsent(value ?? false); // Default to false if undefined
-    });
-  }, []);
+  monday.storage.getItem('cookieConsent').then((res) => {
+    const value = res.data?.value;
+    console.log('Stored Cookie Consent:', value);
+    setCookieConsent(value ?? false); // Default to false if undefined
+  });
+}, []);
 
   const handleAccept = () => {
     setCookieConsent(true);
@@ -136,12 +137,12 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         setShowWarning(false);
       } else {
         setShowWarning(true);
-        
+
         const loomIdMatch = defaultUrl?.match(matchingSequence2);
         if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
 
           setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
-          
+
         } else {
           setShowWarning(true);
           setEmbedUrl(defUrl);
@@ -303,23 +304,35 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     }
   };
 
-  const handleWidthChange = (event) => {
-    const value = parseInt(event.target.value, 10);
-    // setWidthSetting(false) ;
-    // setWidth(value > 0 ? value : 600);
-    setWidth(value);
-    // localStorage.setItem('width', value) ;
-    monday.storage.instance.setItem("width", value);
+  const DEFAULT_WIDTH = 600;
+  const DEFAULT_HEIGHT = 400;
+
+  const handleWidthChange = (e) => {
+    setWidth(e.target.value); // Allow user to type freely
   };
 
-  const handleHeightChange = (event) => {
-    const value = parseInt(event.target.value, 10);
-    // setHeightSetting(false) ;
-    // setHeight(value > 0 ? value : 400);
-    setHeight(value);
-    // localStorage.setItem('height', value) ;
-    monday.storage.instance.setItem("height", value);
+  const handleHeightChange = (e) => {
+    setHeight(e.target.value); // Allow user to type freely
   };
+
+  const validateWidth = () => {
+    if (/^0\d+$/.test(width)) {
+      alert("Enter a valid number. Leading zeros are not allowed.");
+      setWidth(DEFAULT_WIDTH);
+    } else {
+      setWidth(width ? Number(width) : DEFAULT_WIDTH);
+    }
+  };
+
+  const validateHeight = () => {
+    if (/^0\d+$/.test(height)) {
+      alert("Enter a valid number. Leading zeros are not allowed.");
+      setHeight(DEFAULT_HEIGHT);
+    } else {
+      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
+    }
+  };
+
 
   const toggleEditMode = () => {
     const newEditMode = !isEditing;
@@ -342,7 +355,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   return (
     <div >
-      {!cookieConsent && (
+          {!cookieConsent && (
         <div className="cookie-overlay">
           <div className="cookie-content">
             <h1>Cookie Consent</h1>
@@ -357,7 +370,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       )}
 
 
-
+   
 
       {(<div className="company">
         <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px" }} />
@@ -387,13 +400,25 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
           <iframe
             ref={iframeRef}
             src={embedUrl}
-            width={width>600? width:600}
-            height={height>400? height:400}
+            width={
+              /^\d+$/.test(String(width)) && String(width).startsWith("0") && width !== "0"
+                ? 600
+                : Math.max(600, Number(width) || 600)
+            }
+            height={
+              /^\d+$/.test(String(height)) && String(height).startsWith("0") && height !== "0"
+                ? 400
+                : Math.max(400, Number(height) || 400)
+            }
             frameBorder="0"
             allowFullScreen
             title="Video Player"
             style={{ marginBottom: "10px" }}
           ></iframe>
+
+
+
+
           {submitted && !show && showEdit && (
             <i class="fa-solid fa-pen-to-square fa-xl" onClick={() => {
               setShow(true);
@@ -545,19 +570,23 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
             <input
               type="number"
               value={width}
-              onChange={handleWidthChange}
+              onChange={handleWidthChange}  // Allows typing
+              onBlur={validateWidth}        // Validates after user finishes typing
               style={{ marginLeft: "10px" }}
             />
           </label>
+
           <label style={{ color: fontCol }}>
             Height:
             <input
               type="number"
               value={height}
-              onChange={handleHeightChange}
+              onChange={handleHeightChange} // Allows typing
+              onBlur={validateHeight}       // Validates after user finishes typing
               style={{ marginLeft: "10px" }}
             />
           </label>
+
           <button
             type="button"
             className="btn btn-primary"

@@ -60,7 +60,8 @@ const Header = _ref => {
   const [storedsubmitted, setStoredSubmitted] = (0, _react.useState)("");
   const [storedshowEdit, setStoredShowEdit] = (0, _react.useState)("");
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
-  const [cookieConsent, setCookieConsent] = (0, _react.useState)(true); // Initially null to indicate not yet checked
+  const [cookieConsent, setCookieConsent] = (0, _react.useState)(null); // Initially null to indicate not yet checked
+
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
@@ -284,21 +285,29 @@ const Header = _ref => {
       monday.storage.instance.setItem("url", defUrl);
     }
   };
-  const handleWidthChange = event => {
-    const value = parseInt(event.target.value, 10);
-    // setWidthSetting(false) ;
-    // setWidth(value > 0 ? value : 600);
-    setWidth(value);
-    // localStorage.setItem('width', value) ;
-    monday.storage.instance.setItem("width", value);
+  const DEFAULT_WIDTH = 600;
+  const DEFAULT_HEIGHT = 400;
+  const handleWidthChange = e => {
+    setWidth(e.target.value); // Allow user to type freely
   };
-  const handleHeightChange = event => {
-    const value = parseInt(event.target.value, 10);
-    // setHeightSetting(false) ;
-    // setHeight(value > 0 ? value : 400);
-    setHeight(value);
-    // localStorage.setItem('height', value) ;
-    monday.storage.instance.setItem("height", value);
+  const handleHeightChange = e => {
+    setHeight(e.target.value); // Allow user to type freely
+  };
+  const validateWidth = () => {
+    if (/^0\d+$/.test(width)) {
+      alert("Enter a valid number. Leading zeros are not allowed.");
+      setWidth(DEFAULT_WIDTH);
+    } else {
+      setWidth(width ? Number(width) : DEFAULT_WIDTH);
+    }
+  };
+  const validateHeight = () => {
+    if (/^0\d+$/.test(height)) {
+      alert("Enter a valid number. Leading zeros are not allowed.");
+      setHeight(DEFAULT_HEIGHT);
+    } else {
+      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
+    }
   };
   const toggleEditMode = () => {
     const newEditMode = !isEditing;
@@ -368,8 +377,8 @@ const Header = _ref => {
   }, /*#__PURE__*/_react.default.createElement("iframe", {
     ref: iframeRef,
     src: embedUrl,
-    width: width > 600 ? width : 600,
-    height: height > 400 ? height : 400,
+    width: /^\d+$/.test(String(width)) && String(width).startsWith("0") && width !== "0" ? 600 : Math.max(600, Number(width) || 600),
+    height: /^\d+$/.test(String(height)) && String(height).startsWith("0") && height !== "0" ? 400 : Math.max(400, Number(height) || 400),
     frameBorder: "0",
     allowFullScreen: true,
     title: "Video Player",
@@ -514,7 +523,10 @@ const Header = _ref => {
   }, "Width:", /*#__PURE__*/_react.default.createElement("input", {
     type: "number",
     value: width,
-    onChange: handleWidthChange,
+    onChange: handleWidthChange // Allows typing
+    ,
+    onBlur: validateWidth // Validates after user finishes typing
+    ,
     style: {
       marginLeft: "10px"
     }
@@ -525,7 +537,10 @@ const Header = _ref => {
   }, "Height:", /*#__PURE__*/_react.default.createElement("input", {
     type: "number",
     value: height,
-    onChange: handleHeightChange,
+    onChange: handleHeightChange // Allows typing
+    ,
+    onBlur: validateHeight // Validates after user finishes typing
+    ,
     style: {
       marginLeft: "10px"
     }
