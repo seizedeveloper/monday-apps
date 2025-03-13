@@ -28,6 +28,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [height, setHeight] = useState(400);
   const [embedUrl, setEmbedUrl] = useState(defUrl);
   const [showWarning, setShowWarning] = useState(false);
+  const [showdimensionWarning, setShowdimWarning] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [show, setShow] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -70,6 +71,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   useEffect(() => {
     setShowWarning(false);
+    setShowdimWarning(false);
   }, [embedUrl]);
   useEffect(() => {
     monday.storage.instance.getItem('url').then(res => {
@@ -355,8 +357,10 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   };
 
   const validateWidth = () => {
-    if (/^0\d+$/.test(width)) {
-      alert("Enter a valid number. Leading zeros are not allowed.");
+    if (width<0 || /^0\d+$/.test(width)) {
+      
+      //alert("Enter a valid positive number. Leading zeros are not allowed.");
+      setShowdimWarning(true);
       setWidth(DEFAULT_WIDTH);
     } else {
       setWidth(width ? Number(width) : DEFAULT_WIDTH);
@@ -364,11 +368,12 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   };
 
   const validateHeight = () => {
-    if (/^0\d+$/.test(height)) {
-      alert("Enter a valid number. Leading zeros are not allowed.");
+    if (height<0 || /^0\d+$/.test(height)) {
+      //alert("Enter a valid positive number. Leading zeros are not allowed.");
+      setShowdimWarning(true);
       setHeight(DEFAULT_HEIGHT);
     } else {
-      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
+      setHeight(height ? Number(height) : DEFAULT_HEIGHT); 
     }
   };
 
@@ -676,6 +681,12 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       {showWarning && (
         <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
           Invalid {dashUrl} URL. Please check the link and try again.
+        </div>
+      )}
+
+{showdimensionWarning && (
+        <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
+          Enter a valid positive number. Leading zeros are not allowed.
         </div>
       )}
 

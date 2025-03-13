@@ -46,6 +46,7 @@ const Header = _ref => {
   const [height, setHeight] = (0, _react.useState)(400);
   const [embedUrl, setEmbedUrl] = (0, _react.useState)(defUrl);
   const [showWarning, setShowWarning] = (0, _react.useState)(false);
+  const [showdimensionWarning, setShowdimWarning] = (0, _react.useState)(false);
   const [submitted, setSubmitted] = (0, _react.useState)(false);
   const [show, setShow] = (0, _react.useState)(false);
   const [showEdit, setShowEdit] = (0, _react.useState)(false);
@@ -84,6 +85,7 @@ const Header = _ref => {
   };
   (0, _react.useEffect)(() => {
     setShowWarning(false);
+    setShowdimWarning(false);
   }, [embedUrl]);
   (0, _react.useEffect)(() => {
     monday.storage.instance.getItem('url').then(res => {
@@ -331,16 +333,18 @@ const Header = _ref => {
     setHeight(e.target.value); // Allow user to type freely
   };
   const validateWidth = () => {
-    if (/^0\d+$/.test(width)) {
-      alert("Enter a valid number. Leading zeros are not allowed.");
+    if (width < 0 || /^0\d+$/.test(width)) {
+      //alert("Enter a valid positive number. Leading zeros are not allowed.");
+      setShowdimWarning(true);
       setWidth(DEFAULT_WIDTH);
     } else {
       setWidth(width ? Number(width) : DEFAULT_WIDTH);
     }
   };
   const validateHeight = () => {
-    if (/^0\d+$/.test(height)) {
-      alert("Enter a valid number. Leading zeros are not allowed.");
+    if (height < 0 || /^0\d+$/.test(height)) {
+      //alert("Enter a valid positive number. Leading zeros are not allowed.");
+      setShowdimWarning(true);
       setHeight(DEFAULT_HEIGHT);
     } else {
       setHeight(height ? Number(height) : DEFAULT_HEIGHT);
@@ -666,7 +670,14 @@ const Header = _ref => {
       margin: "5px",
       width: "600px"
     }
-  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), /*#__PURE__*/_react.default.createElement("div", {
+  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), showdimensionWarning && /*#__PURE__*/_react.default.createElement("div", {
+    className: "alert alert-danger",
+    role: "alert",
+    style: {
+      margin: "5px",
+      width: "600px"
+    }
+  }, "Enter a valid positive number. Leading zeros are not allowed."), /*#__PURE__*/_react.default.createElement("div", {
     className: "details"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info"
