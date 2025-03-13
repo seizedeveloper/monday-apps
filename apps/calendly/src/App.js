@@ -59,9 +59,9 @@ const App = () => {
   // var isViewOnly = false;
   var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
   var matchingSequence =/calendly\.com\/([a-zA-Z0-9_-]+)/;
-  var ifEditing = true;
+  var ifEditing = false;
 
-  var appName = 'Calendly Integration for monday';
+  var appName = 'Calendly Embed for monday.com';
   var dashUrl = 'Calendly';
   var docLink = "https://satisfactiondrivers.com/calendly-documentation";
   var decodePart1 = 'https://calendly.com/'

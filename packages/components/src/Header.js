@@ -359,20 +359,22 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const validateWidth = () => {
     if (width<0 || /^0\d+$/.test(width)) {
       
-      //alert("Enter a valid positive number. Leading zeros are not allowed.");
+      alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
       setWidth(DEFAULT_WIDTH);
     } else {
+      setShowdimWarning(false);
       setWidth(width ? Number(width) : DEFAULT_WIDTH);
     }
   };
 
   const validateHeight = () => {
     if (height<0 || /^0\d+$/.test(height)) {
-      //alert("Enter a valid positive number. Leading zeros are not allowed.");
+      alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
       setHeight(DEFAULT_HEIGHT);
     } else {
+      setShowdimWarning(false);
       setHeight(height ? Number(height) : DEFAULT_HEIGHT); 
     }
   };
@@ -684,11 +686,11 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         </div>
       )}
 
-{showdimensionWarning && (
+{/* {showdimensionWarning && (
         <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
           Enter a valid positive number. Leading zeros are not allowed.
         </div>
-      )}
+      )} */}
 
       {(<div className="details">
         <div className="info">
