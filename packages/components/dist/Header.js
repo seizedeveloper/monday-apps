@@ -327,29 +327,40 @@ const Header = _ref => {
   const DEFAULT_WIDTH = 600;
   const DEFAULT_HEIGHT = 400;
   const handleWidthChange = e => {
-    setWidth(e.target.value); // Allow user to type freely
+    const value = e.target.value;
+    if (isValidNumber(value)) {
+      setWidth(value); // Allow valid input
+      setShowdimWarning(false);
+    } else {
+      setShowdimWarning(true);
+    }
   };
   const handleHeightChange = e => {
-    setHeight(e.target.value); // Allow user to type freely
+    const value = e.target.value;
+    if (isValidNumber(value)) {
+      setHeight(value);
+      setShowdimWarning(false);
+    } else {
+      setShowdimWarning(true);
+    }
+  };
+
+  // Function to validate input
+  const isValidNumber = value => {
+    return /^\d*\.?\d+$/.test(value) && value > 0 && !/^0\d+$/.test(value);
   };
   const validateWidth = () => {
-    if (width < 0 || /^0\d+$/.test(width)) {
-      alert("Enter a valid positive number. Leading zeros are not allowed.");
-      setShowdimWarning(true);
+    if (!isValidNumber(width)) {
+      alert("Enter a valid positive number. Leading zeros and negative values are not allowed.");
       setWidth(DEFAULT_WIDTH);
-    } else {
-      setShowdimWarning(false);
-      setWidth(width ? Number(width) : DEFAULT_WIDTH);
+      setShowdimWarning(true);
     }
   };
   const validateHeight = () => {
-    if (height < 0 || /^0\d+$/.test(height)) {
-      alert("Enter a valid positive number. Leading zeros are not allowed.");
-      setShowdimWarning(true);
+    if (!isValidNumber(height)) {
+      alert("Enter a valid positive number. Leading zeros and negative values are not allowed.");
       setHeight(DEFAULT_HEIGHT);
-    } else {
-      setShowdimWarning(false);
-      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
+      setShowdimWarning(true);
     }
   };
   const toggleEditMode = () => {

@@ -350,6 +350,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   const handleWidthChange = (e) => {
     setWidth(e.target.value); // Allow user to type freely
+    validateWidth(value);
   };
 
   const handleHeightChange = (e) => {
@@ -357,7 +358,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   };
 
   const validateWidth = () => {
-    if (width<0 || /^0\d+$/.test(width)) {
+    if ( /^0\d+$/.test(width)) {
       
       alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
@@ -369,7 +370,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   };
 
   const validateHeight = () => {
-    if (height<0 || /^0\d+$/.test(height)) {
+    if ( /^0\d+$/.test(height)) {
       alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
       setHeight(DEFAULT_HEIGHT);
