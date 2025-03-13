@@ -120,6 +120,45 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
 
 
+  // useEffect(() => {
+  //   const urlToUse = storedurl && storedurl !== defUrl ? storedurl : defaultUrl;
+  //   setUrl(urlToUse);
+  
+  //   // Find the matching pattern
+  //   const loomIdMatch = urlToUse.match(matchingSequence) || urlToUse.match(matchingSequence2);
+    
+  //   if (loomIdMatch) {
+  //     const id1 = loomIdMatch[1];
+  //     const id2 = loomIdMatch[2];
+  
+  //     let embedUrl;
+  //     if (iscanva && id1 && id2) {
+  //       embedUrl = urlToUse.match(matchingSequence)
+  //       ?  `https://www.canva.com/design/${id1}/${id2}/view?embed`
+  //       : `https://www.loom.com/embed/${id}?autoplay=false`;
+       
+  //     } else {
+  //       const id = id1 || id2;
+  //       embedUrl = urlToUse.match(matchingSequence)
+  //         ? `${decodePart1}${id}${decodePart2 ?? ''}`
+  //         : `https://www.loom.com/embed/${id}?autoplay=false`;
+  //     }
+  
+  //     setEmbedUrl(embedUrl);
+  //     setShowWarning(false);
+  //   } else {
+  //     setShowWarning(true);
+  //     const loomIdMatch = defaultUrl.match(matchingSequence2)
+  //     id =loomIdMatch[1] || loomIdMatch[2];
+  //     setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`); // Fallback URL
+  //   }
+  
+  //   monday.execute("valueCreatedForUser"); // Trigger event once URL is set
+  // }, [storedurl, defUrl, defaultUrl, matchingSequence, matchingSequence2, iscanva]);
+  
+
+
+
   useEffect(() => {
     if (storedurl !== '' && storedurl !== defUrl) {
       setUrl(storedurl);
@@ -373,7 +412,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
    
 
       {(<div className="company">
-        <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px" }} />
+        <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px", position:"absolute", left:"0px" }} />
         <div className="name" >
           <b><span style={{ height: "19px", color: fontCol }}>{appName}</span></b>
           <span style={{ height: "16px", textAlign: "left", color: fontCol }}> by Satisfaction Drivers</span>
@@ -396,7 +435,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
               monday.storage.instance.setItem("showEdit", showEdit);
             }
           }}
-          style={{ position: 'relative', width: '100%', height: 'auto' }}>
+          style={{ position: 'relative', width: 'auto', height: 'auto' }}>
           <iframe
             ref={iframeRef}
             src={embedUrl}
@@ -413,12 +452,8 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
             frameBorder="0"
             allowFullScreen
             title="Video Player"
-            style={{ marginBottom: "10px" }}
+            style={{ marginBottom: "10px", marginRight:"0%" }}
           ></iframe>
-
-
-
-
           {submitted && !show && showEdit && (
             <i class="fa-solid fa-pen-to-square fa-xl" onClick={() => {
               setShow(true);

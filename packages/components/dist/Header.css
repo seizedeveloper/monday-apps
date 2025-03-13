@@ -9,10 +9,12 @@
     align-items: center;
     text-align: center;
     height: 100vh;
+    width:fit-content;
+    margin: auto;
     /* margin-top: 20px; */
 }
 
-.company {
+/* .company {
     display: flex;
     align-items: center;
     margin-top: 10px;
@@ -20,8 +22,17 @@
     left: 50%;
     transform: translateX(-300px);
     margin-bottom: -15px;
-}
+} */
 
+.company{
+    position: relative;
+    padding-bottom: 60px;
+    padding-top: 25px;
+    display: block;
+    width: 50%
+    
+    
+}
 .company img {
     width: 50px;
     height: 50px;
@@ -35,6 +46,9 @@
 .name {
     display: flex;
     flex-direction: column;
+    position: absolute;
+    left:60px
+   
 }
 
 .name h3 {

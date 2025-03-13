@@ -132,6 +132,43 @@ const Header = _ref => {
     }
     monday.execute('valueCreatedForUser'); // Value-created event when loading saved state
   }, []);
+
+  // useEffect(() => {
+  //   const urlToUse = storedurl && storedurl !== defUrl ? storedurl : defaultUrl;
+  //   setUrl(urlToUse);
+
+  //   // Find the matching pattern
+  //   const loomIdMatch = urlToUse.match(matchingSequence) || urlToUse.match(matchingSequence2);
+
+  //   if (loomIdMatch) {
+  //     const id1 = loomIdMatch[1];
+  //     const id2 = loomIdMatch[2];
+
+  //     let embedUrl;
+  //     if (iscanva && id1 && id2) {
+  //       embedUrl = urlToUse.match(matchingSequence)
+  //       ?  `https://www.canva.com/design/${id1}/${id2}/view?embed`
+  //       : `https://www.loom.com/embed/${id}?autoplay=false`;
+
+  //     } else {
+  //       const id = id1 || id2;
+  //       embedUrl = urlToUse.match(matchingSequence)
+  //         ? `${decodePart1}${id}${decodePart2 ?? ''}`
+  //         : `https://www.loom.com/embed/${id}?autoplay=false`;
+  //     }
+
+  //     setEmbedUrl(embedUrl);
+  //     setShowWarning(false);
+  //   } else {
+  //     setShowWarning(true);
+  //     const loomIdMatch = defaultUrl.match(matchingSequence2)
+  //     id =loomIdMatch[1] || loomIdMatch[2];
+  //     setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`); // Fallback URL
+  //   }
+
+  //   monday.execute("valueCreatedForUser"); // Trigger event once URL is set
+  // }, [storedurl, defUrl, defaultUrl, matchingSequence, matchingSequence2, iscanva]);
+
   (0, _react.useEffect)(() => {
     if (storedurl !== '' && storedurl !== defUrl) {
       setUrl(storedurl);
@@ -341,7 +378,9 @@ const Header = _ref => {
     alt: "Company logo",
     style: {
       height: "50px",
-      width: "50px"
+      width: "50px",
+      position: "absolute",
+      left: "0px"
     }
   }), /*#__PURE__*/_react.default.createElement("div", {
     className: "name"
@@ -371,7 +410,7 @@ const Header = _ref => {
     },
     style: {
       position: 'relative',
-      width: '100%',
+      width: 'auto',
       height: 'auto'
     }
   }, /*#__PURE__*/_react.default.createElement("iframe", {
@@ -383,7 +422,8 @@ const Header = _ref => {
     allowFullScreen: true,
     title: "Video Player",
     style: {
-      marginBottom: "10px"
+      marginBottom: "10px",
+      marginRight: "0%"
     }
   }), submitted && !show && showEdit && /*#__PURE__*/_react.default.createElement("i", {
     class: "fa-solid fa-pen-to-square fa-xl",
