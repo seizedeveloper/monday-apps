@@ -11,21 +11,61 @@ import mondaySdk from 'monday-sdk-js';
 //documentation link
 //const Player = ( {fontCol, bgCol,defaulturl,matchingSequence,ifEditing,logo,appName,dashUrl,docLink} ) => {
 
+const monday = mondaySdk();
+monday.setApiVersion("2023-10");
 
+// Check if the app is installed and reset cookies if it's a new installation
+async function checkAppInstallation() {
+  const installIdKey = "app_install_id";
+  try {
+    const storedInstallId = await monday.storage.instance.getItem(installIdKey);
+    if (!storedInstallId?.data?.value) {
+      console.log("New installation detected. Resetting cookies...");
+      await monday.storage.instance.setItem(installIdKey, Date.now().toString());
+      await monday.storage.instance.deleteItem("cookie_consent");
+    } else {
+      console.log("Existing installation. No need to reset cookies.");
+    }
+  } catch (error) {
+    console.error("Error checking app installation:", error);
+  }
+}
+
+// Check if the user has accepted the cookie policy
+async function checkCookieConsent() {
+  try {
+    const response = await monday.storage.instance.getItem("cookie_consent");
+    return response?.data?.value === "true";
+  } catch (error) {
+    console.error("Error fetching cookie consent:", error);
+    return false;
+  }
+}
+
+// Set cookie consent when the user accepts
+async function setCookieConsent() {
+  try {
+    await monday.storage.instance.setItem("cookie_consent", "true");
+    console.log("Cookie consent saved.");
+  } catch (error) {
+    console.error("Error setting cookie consent:", error);
+  }
+}
 const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo, appName, dashUrl, docLink, decodePart1, decodePart2, cookiepolicy }) => {
 
-  const monday = mondaySdk();
-  monday.setApiVersion("2023-10");
+
 
   const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
 
   const defaultUrl = defaulturl;
   const id = defaultUrl?.match(matchingSequence2)?.[1];
   const defUrl = defaulturl;
+  const DEFAULT_WIDTH = 600;
+  const DEFAULT_HEIGHT = 400;
 
   const [url, setUrl] = useState('');
-  const [width, setWidth] = useState(600);
-  const [height, setHeight] = useState(400);
+  const [width, setWidth] = useState(DEFAULT_WIDTH);
+  const [height, setHeight] = useState(DEFAULT_HEIGHT);
   const [embedUrl, setEmbedUrl] = useState(defUrl);
   const [showWarning, setShowWarning] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -42,30 +82,30 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedsubmitted, setStoredSubmitted] = useState("");
   const [storedshowEdit, setStoredShowEdit] = useState("");
   const [storedisEditing, setStoredisEditing] = useState(false);
-  const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
+  const [warningMessage, setWarningMessage] = useState("");
+  // const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
+  const [showPopup, setShowPopup] = useState(false);
+
+
+  useEffect(() => {
+    async function init() {
+      await checkAppInstallation();  // Ensure the app installation is checked first
+      const hasConsent = await checkCookieConsent();
+      setShowPopup(!hasConsent);  // Show popup if consent is not given
+    }
+    
+    init();
+  }, []);
+
+  const handleAccept = async () => {
+    await setCookieConsent();
+    setShowPopup(false);
+  };
 
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
   }
- 
- // Load the stored cookie consent value when the app loads
- useEffect(() => {
-
-
-  monday.storage.getItem('cookieConsent').then((res) => {
-    const value = res.data?.value;
-    console.log('Stored Cookie Consent:', value);
-    setCookieConsent(value ?? false); // Default to false if undefined
-  });
-}, []);
-
-  const handleAccept = () => {
-    setCookieConsent(true);
-    monday.storage.setItem('cookieConsent', true).then(() => {
-      console.log('Cookie Consent set to true');
-    });
-  };
 
 
   useEffect(() => {
@@ -249,7 +289,6 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [show, submitted, showWarning]);
-
   const handleUrlChange = (event) => {
     const inputUrl = event.target.value;
     setUrl(inputUrl);
@@ -280,10 +319,12 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
         setShowWarning(false);
       } else {
+        setWarningMessage(`Invalid ${dashUrl} URL. Please check the link and try again.`);
         setShowWarning(true);
         setEmbedUrl(defUrl);
       }
       // setEmbedUrl(defUrl);
+      setWarningMessage(`Invalid ${dashUrl} URL. Please check the link and try again.`);
       setShowWarning(true);
       // setIsValidUrl(false);
 
@@ -295,6 +336,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
         setShowWarning(false);
       } else {
+        setWarningMessage(`Invalid ${dashUrl} URL. Please check the link and try again.`);
         setShowWarning(true);
         setEmbedUrl(defUrl);
       }
@@ -304,31 +346,39 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     }
   };
 
-  const DEFAULT_WIDTH = 600;
-  const DEFAULT_HEIGHT = 400;
-
   const handleWidthChange = (e) => {
-    setWidth(e.target.value); // Allow user to type freely
+    setWidth(e.target.value);
+    setShowWarning(false); // Hide warning when user starts typing
   };
 
   const handleHeightChange = (e) => {
-    setHeight(e.target.value); // Allow user to type freely
+    setHeight(e.target.value);
+    setShowWarning(false); // Hide warning when user starts typing
   };
 
   const validateWidth = () => {
     if (/^0\d+$/.test(width)) {
-      alert("Enter a valid number. Leading zeros are not allowed.");
+      console.log("Invalid width detected!");
+      if (!showWarning) { // Prevent duplicate warnings
+        setWarningMessage("Width cannot have leading zeros.");
+        setShowWarning(true);
+      }
       setWidth(DEFAULT_WIDTH);
     } else {
+      setShowWarning(false);
       setWidth(width ? Number(width) : DEFAULT_WIDTH);
     }
   };
 
   const validateHeight = () => {
     if (/^0\d+$/.test(height)) {
-      alert("Enter a valid number. Leading zeros are not allowed.");
+      if (!showWarning) { // Prevent setting the warning multiple times
+        setWarningMessage("Height cannot have leading zeros.");
+        setShowWarning(true);
+      }
       setHeight(DEFAULT_HEIGHT);
     } else {
+      setShowWarning(false);
       setHeight(height ? Number(height) : DEFAULT_HEIGHT);
     }
   };
@@ -355,22 +405,12 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   return (
     <div >
-          {!cookieConsent && (
-        <div className="cookie-overlay">
-          <div className="cookie-content">
-            <h1>Cookie Consent</h1>
-            <p> We use cookies to enhance your user experience. By using our app,
-              you agree to our use of cookies.{" "}</p>
-            <p><a href={cookiepolicy} >Learn more.</a></p>
-            <button className="accept-button" onClick={handleAccept}>
-              Accept Cookies
-            </button>
-          </div>
+    {showPopup && (
+        <div className="cookie-popup">
+          <p>This app uses cookies to enhance your experience.</p>
+          <button onClick={handleAccept}>Accept</button>
         </div>
       )}
-
-
-   
 
       {(<div className="company">
         <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px" }} />
@@ -615,6 +655,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
               type="number"
               value={width}
               onChange={handleWidthChange}
+              onBlur={validateWidth}
               style={{ marginLeft: "10px" }}
             />
           </label>
@@ -624,6 +665,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
               type="number"
               value={height}
               onChange={handleHeightChange}
+              onBlur={validateHeight}
               style={{ marginLeft: "10px" }}
             />
           </label>
@@ -640,9 +682,10 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
       {showWarning && (
         <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
-          Invalid {dashUrl} URL. Please check the link and try again.
+          {warningMessage}
         </div>
       )}
+
 
       {(<div className="details">
         <div className="info">
@@ -664,5 +707,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     </div>
   );
 };
+
+
 
 export default Header;

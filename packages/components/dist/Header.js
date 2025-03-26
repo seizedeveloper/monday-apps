@@ -19,6 +19,48 @@ function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; 
 //documentation link
 //const Player = ( {fontCol, bgCol,defaulturl,matchingSequence,ifEditing,logo,appName,dashUrl,docLink} ) => {
 
+const monday = (0, _mondaySdkJs.default)();
+monday.setApiVersion("2023-10");
+
+// Check if the app is installed and reset cookies if it's a new installation
+async function checkAppInstallation() {
+  const installIdKey = "app_install_id";
+  try {
+    var _storedInstallId$data;
+    const storedInstallId = await monday.storage.instance.getItem(installIdKey);
+    if (!(storedInstallId !== null && storedInstallId !== void 0 && (_storedInstallId$data = storedInstallId.data) !== null && _storedInstallId$data !== void 0 && _storedInstallId$data.value)) {
+      console.log("New installation detected. Resetting cookies...");
+      await monday.storage.instance.setItem(installIdKey, Date.now().toString());
+      await monday.storage.instance.deleteItem("cookie_consent");
+    } else {
+      console.log("Existing installation. No need to reset cookies.");
+    }
+  } catch (error) {
+    console.error("Error checking app installation:", error);
+  }
+}
+
+// Check if the user has accepted the cookie policy
+async function checkCookieConsent() {
+  try {
+    var _response$data;
+    const response = await monday.storage.instance.getItem("cookie_consent");
+    return (response === null || response === void 0 || (_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.value) === "true";
+  } catch (error) {
+    console.error("Error fetching cookie consent:", error);
+    return false;
+  }
+}
+
+// Set cookie consent when the user accepts
+async function setCookieConsent() {
+  try {
+    await monday.storage.instance.setItem("cookie_consent", "true");
+    console.log("Cookie consent saved.");
+  } catch (error) {
+    console.error("Error setting cookie consent:", error);
+  }
+}
 const Header = _ref => {
   var _defaultUrl$match;
   let {
@@ -35,15 +77,15 @@ const Header = _ref => {
     decodePart2,
     cookiepolicy
   } = _ref;
-  const monday = (0, _mondaySdkJs.default)();
-  monday.setApiVersion("2023-10");
   const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
   const defaultUrl = defaulturl;
   const id = defaultUrl === null || defaultUrl === void 0 || (_defaultUrl$match = defaultUrl.match(matchingSequence2)) === null || _defaultUrl$match === void 0 ? void 0 : _defaultUrl$match[1];
   const defUrl = defaulturl;
+  const DEFAULT_WIDTH = 600;
+  const DEFAULT_HEIGHT = 400;
   const [url, setUrl] = (0, _react.useState)('');
-  const [width, setWidth] = (0, _react.useState)(600);
-  const [height, setHeight] = (0, _react.useState)(400);
+  const [width, setWidth] = (0, _react.useState)(DEFAULT_WIDTH);
+  const [height, setHeight] = (0, _react.useState)(DEFAULT_HEIGHT);
   const [embedUrl, setEmbedUrl] = (0, _react.useState)(defUrl);
   const [showWarning, setShowWarning] = (0, _react.useState)(false);
   const [submitted, setSubmitted] = (0, _react.useState)(false);
@@ -60,72 +102,69 @@ const Header = _ref => {
   const [storedsubmitted, setStoredSubmitted] = (0, _react.useState)("");
   const [storedshowEdit, setStoredShowEdit] = (0, _react.useState)("");
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
-  const [cookieConsent, setCookieConsent] = (0, _react.useState)(null); // Initially null to indicate not yet checked
-
+  const [warningMessage, setWarningMessage] = (0, _react.useState)("");
+  // const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
+  const [showPopup, setShowPopup] = (0, _react.useState)(false);
+  (0, _react.useEffect)(() => {
+    async function init() {
+      await checkAppInstallation(); // Ensure the app installation is checked first
+      const hasConsent = await checkCookieConsent();
+      setShowPopup(!hasConsent); // Show popup if consent is not given
+    }
+    init();
+  }, []);
+  const handleAccept = async () => {
+    await setCookieConsent();
+    setShowPopup(false);
+  };
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
   }
-
-  // Load the stored cookie consent value when the app loads
-  (0, _react.useEffect)(() => {
-    monday.storage.getItem('cookieConsent').then(res => {
-      var _res$data;
-      const value = (_res$data = res.data) === null || _res$data === void 0 ? void 0 : _res$data.value;
-      console.log('Stored Cookie Consent:', value);
-      setCookieConsent(value !== null && value !== void 0 ? value : false); // Default to false if undefined
-    });
-  }, []);
-  const handleAccept = () => {
-    setCookieConsent(true);
-    monday.storage.setItem('cookieConsent', true).then(() => {
-      console.log('Cookie Consent set to true');
-    });
-  };
   (0, _react.useEffect)(() => {
     setShowWarning(false);
   }, [embedUrl]);
   (0, _react.useEffect)(() => {
     monday.storage.instance.getItem('url').then(res => {
-      var _res$data2;
-      const value = (_res$data2 = res.data) === null || _res$data2 === void 0 ? void 0 : _res$data2.value;
+      var _res$data;
+      const value = (_res$data = res.data) === null || _res$data === void 0 ? void 0 : _res$data.value;
       console.log(value);
       setStoredUrl(value !== null && value !== void 0 ? value : ''); // Provide a default value if undefined
     });
     monday.storage.instance.getItem('height').then(res => {
-      var _res$data3;
-      const value = (_res$data3 = res.data) === null || _res$data3 === void 0 ? void 0 : _res$data3.value;
+      var _res$data2;
+      const value = (_res$data2 = res.data) === null || _res$data2 === void 0 ? void 0 : _res$data2.value;
       console.log(value);
       setStoredHeight(value !== null && value !== void 0 ? value : 0); // Provide a sensible default, e.g., 0 for numbers
     });
     monday.storage.instance.getItem('width').then(res => {
-      var _res$data4;
-      const value = (_res$data4 = res.data) === null || _res$data4 === void 0 ? void 0 : _res$data4.value;
+      var _res$data3;
+      const value = (_res$data3 = res.data) === null || _res$data3 === void 0 ? void 0 : _res$data3.value;
       console.log(value);
       setStoredWidth(value !== null && value !== void 0 ? value : 0);
     });
     monday.storage.instance.getItem('show').then(res => {
-      var _res$data5;
-      const value = (_res$data5 = res.data) === null || _res$data5 === void 0 ? void 0 : _res$data5.value;
+      var _res$data4;
+      const value = (_res$data4 = res.data) === null || _res$data4 === void 0 ? void 0 : _res$data4.value;
       console.log(value);
       setStoredShow(value !== null && value !== void 0 ? value : false); // Provide default, e.g., false for booleans
     });
     monday.storage.instance.getItem('submitted').then(res => {
-      var _res$data6;
-      const value = (_res$data6 = res.data) === null || _res$data6 === void 0 ? void 0 : _res$data6.value;
+      var _res$data5;
+      const value = (_res$data5 = res.data) === null || _res$data5 === void 0 ? void 0 : _res$data5.value;
       console.log(value);
       setStoredSubmitted(value !== null && value !== void 0 ? value : false);
     });
     monday.storage.instance.getItem('showEdit').then(res => {
-      var _res$data7;
-      const value = (_res$data7 = res.data) === null || _res$data7 === void 0 ? void 0 : _res$data7.value;
+      var _res$data6;
+      const value = (_res$data6 = res.data) === null || _res$data6 === void 0 ? void 0 : _res$data6.value;
       console.log(value);
       setStoredShowEdit(value !== null && value !== void 0 ? value : false);
     });
     if (ifEditing) {
       monday.storage.instance.getItem('isEditing').then(res => {
-        var _res$data8;
-        const value = (_res$data8 = res.data) === null || _res$data8 === void 0 ? void 0 : _res$data8.value;
+        var _res$data7;
+        const value = (_res$data7 = res.data) === null || _res$data7 === void 0 ? void 0 : _res$data7.value;
         console.log(value);
         setStoredisEditing(value !== null && value !== void 0 ? value : false);
       });
@@ -264,10 +303,12 @@ const Header = _ref => {
         setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
         setShowWarning(false);
       } else {
+        setWarningMessage("Invalid ".concat(dashUrl, " URL. Please check the link and try again."));
         setShowWarning(true);
         setEmbedUrl(defUrl);
       }
       // setEmbedUrl(defUrl);
+      setWarningMessage("Invalid ".concat(dashUrl, " URL. Please check the link and try again."));
       setShowWarning(true);
       // setIsValidUrl(false);
     }
@@ -277,6 +318,7 @@ const Header = _ref => {
         setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
         setShowWarning(false);
       } else {
+        setWarningMessage("Invalid ".concat(dashUrl, " URL. Please check the link and try again."));
         setShowWarning(true);
         setEmbedUrl(defUrl);
       }
@@ -285,27 +327,38 @@ const Header = _ref => {
       monday.storage.instance.setItem("url", defUrl);
     }
   };
-  const DEFAULT_WIDTH = 600;
-  const DEFAULT_HEIGHT = 400;
   const handleWidthChange = e => {
-    setWidth(e.target.value); // Allow user to type freely
+    setWidth(e.target.value);
+    setShowWarning(false); // Hide warning when user starts typing
   };
   const handleHeightChange = e => {
-    setHeight(e.target.value); // Allow user to type freely
+    setHeight(e.target.value);
+    setShowWarning(false); // Hide warning when user starts typing
   };
   const validateWidth = () => {
     if (/^0\d+$/.test(width)) {
-      alert("Enter a valid number. Leading zeros are not allowed.");
+      console.log("Invalid width detected!");
+      if (!showWarning) {
+        // Prevent duplicate warnings
+        setWarningMessage("Width cannot have leading zeros.");
+        setShowWarning(true);
+      }
       setWidth(DEFAULT_WIDTH);
     } else {
+      setShowWarning(false);
       setWidth(width ? Number(width) : DEFAULT_WIDTH);
     }
   };
   const validateHeight = () => {
     if (/^0\d+$/.test(height)) {
-      alert("Enter a valid number. Leading zeros are not allowed.");
+      if (!showWarning) {
+        // Prevent setting the warning multiple times
+        setWarningMessage("Height cannot have leading zeros.");
+        setShowWarning(true);
+      }
       setHeight(DEFAULT_HEIGHT);
     } else {
+      setShowWarning(false);
       setHeight(height ? Number(height) : DEFAULT_HEIGHT);
     }
   };
@@ -325,16 +378,11 @@ const Header = _ref => {
       }
     }
   };
-  return /*#__PURE__*/_react.default.createElement("div", null, !cookieConsent && /*#__PURE__*/_react.default.createElement("div", {
-    className: "cookie-overlay"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "cookie-content"
-  }, /*#__PURE__*/_react.default.createElement("h1", null, "Cookie Consent"), /*#__PURE__*/_react.default.createElement("p", null, " We use cookies to enhance your user experience. By using our app, you agree to our use of cookies.", " "), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("a", {
-    href: cookiepolicy
-  }, "Learn more.")), /*#__PURE__*/_react.default.createElement("button", {
-    className: "accept-button",
+  return /*#__PURE__*/_react.default.createElement("div", null, showPopup && /*#__PURE__*/_react.default.createElement("div", {
+    className: "cookie-popup"
+  }, /*#__PURE__*/_react.default.createElement("p", null, "This app uses cookies to enhance your experience."), /*#__PURE__*/_react.default.createElement("button", {
     onClick: handleAccept
-  }, "Accept Cookies"))), /*#__PURE__*/_react.default.createElement("div", {
+  }, "Accept")), /*#__PURE__*/_react.default.createElement("div", {
     className: "company"
   }, /*#__PURE__*/_react.default.createElement("img", {
     src: logo,
@@ -590,6 +638,7 @@ const Header = _ref => {
     type: "number",
     value: width,
     onChange: handleWidthChange,
+    onBlur: validateWidth,
     style: {
       marginLeft: "10px"
     }
@@ -601,6 +650,7 @@ const Header = _ref => {
     type: "number",
     value: height,
     onChange: handleHeightChange,
+    onBlur: validateHeight,
     style: {
       marginLeft: "10px"
     }
@@ -626,7 +676,7 @@ const Header = _ref => {
       margin: "5px",
       width: "600px"
     }
-  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), /*#__PURE__*/_react.default.createElement("div", {
+  }, warningMessage), /*#__PURE__*/_react.default.createElement("div", {
     className: "details"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info"
