@@ -1,4 +1,6 @@
 "use strict";
+const { useState } = require("react");
+const { useEffect } = require("react");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -63,7 +65,6 @@ const Header = _ref => {
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
   const [cookieConsent, setCookieConsent] = (0, _react.useState)(null); // Initially null to indicate not yet checked
   const [loading, setLoading] = useState(true);
-
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
@@ -262,23 +263,22 @@ const Header = _ref => {
         monday.storage.instance.setItem("submitted", submitted);
       }
     }, 10000); // 10 second
-  };
-const styles = document.createElement("style");
-styles.innerHTML = `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
-document.head.appendChild(styles);
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  
-    return () => clearTimeout(timer); // Cleanup in case component unmounts
-  }, [embedUrl]);
+  };const styles = document.createElement("style");
+  styles.innerHTML = `
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(styles);
+    useEffect(() => {
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1500);
+    
+      return () => clearTimeout(timer); // Cleanup in case component unmounts
+    }, [embedUrl]);
   (0, _react.useEffect)(() => {
     resetTimeout();
     const handleActivity = () => {
@@ -344,40 +344,30 @@ document.head.appendChild(styles);
   const DEFAULT_WIDTH = 600;
   const DEFAULT_HEIGHT = 400;
   const handleWidthChange = e => {
-    const value = e.target.value;
-    if (isValidNumber(value)) {
-      setWidth(value); // Allow valid input
-      setShowdimWarning(false);
-    } else {
-      setShowdimWarning(true);
-    }
+    setWidth(e.target.value); // Allow user to type freely
+    validateWidth(value);
   };
   const handleHeightChange = e => {
-    const value = e.target.value;
-    if (isValidNumber(value)) {
-      setHeight(value);
-      setShowdimWarning(false);
-    } else {
-      setShowdimWarning(true);
-    }
-  };
-
-  // Function to validate input
-  const isValidNumber = value => {
-    return /^\d*\.?\d+$/.test(value) && value > 0 && !/^0\d+$/.test(value);
+    setHeight(e.target.value); // Allow user to type freely
   };
   const validateWidth = () => {
-    if (!isValidNumber(width)) {
-      alert("Enter a valid positive number. Leading zeros and negative values are not allowed.");
-      setWidth(DEFAULT_WIDTH);
+    if (/^0\d+$/.test(width)) {
+      alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
+      setWidth(DEFAULT_WIDTH);
+    } else {
+      setShowdimWarning(false);
+      setWidth(width ? Number(width) : DEFAULT_WIDTH);
     }
   };
   const validateHeight = () => {
-    if (!isValidNumber(height)) {
-      alert("Enter a valid positive number. Leading zeros and negative values are not allowed.");
-      setHeight(DEFAULT_HEIGHT);
+    if (/^0\d+$/.test(height)) {
+      alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
+      setHeight(DEFAULT_HEIGHT);
+    } else {
+      setShowdimWarning(false);
+      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
     }
   };
   const toggleEditMode = () => {
