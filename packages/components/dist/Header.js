@@ -62,6 +62,7 @@ const Header = _ref => {
   const [storedshowEdit, setStoredShowEdit] = (0, _react.useState)("");
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
   const [cookieConsent, setCookieConsent] = (0, _react.useState)(null); // Initially null to indicate not yet checked
+  const [loading, setLoading] = useState(true);
 
   var iscanva = false;
   if (dashUrl == 'Canva') {
@@ -262,6 +263,22 @@ const Header = _ref => {
       }
     }, 10000); // 10 second
   };
+const styles = document.createElement("style");
+styles.innerHTML = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+document.head.appendChild(styles);
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  
+    return () => clearTimeout(timer); // Cleanup in case component unmounts
+  }, [embedUrl]);
   (0, _react.useEffect)(() => {
     resetTimeout();
     const handleActivity = () => {
@@ -430,7 +447,28 @@ const Header = _ref => {
       width: 'auto',
       height: 'auto'
     }
-  }, /*#__PURE__*/_react.default.createElement("iframe", {
+  }, /*#__PURE__*/ loading &&
+  _react.default.createElement(
+    "div",
+    {
+      style: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100px",
+      },
+    },
+    /*#__PURE__*/ _react.default.createElement("div", {
+      style: {
+        width: "40px",
+        height: "40px",
+        border: "4px solid rgb(255, 255, 255)",
+        borderTop: "4px solid #000",
+        borderRadius: "50%",
+        animation: "spin 1s linear infinite",
+      },
+    })
+  ),/*#__PURE__*/_react.default.createElement("iframe", {
     ref: iframeRef,
     src: embedUrl,
     width: /^\d+$/.test(String(width)) && String(width).startsWith("0") && width !== "0" ? 600 : Math.max(600, Number(width) || 600),
