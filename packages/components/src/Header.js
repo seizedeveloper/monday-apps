@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Header.css';
-import mondaySdk from 'monday-sdk-js';
+import CookieConsent from "./CookieConsent";
+import {resetCookiesOnUninstall } from "./storageService";
+import mondaySdk from "monday-sdk-js";
 
 //defaultUrl
 //matching sequence
@@ -14,43 +16,43 @@ import mondaySdk from 'monday-sdk-js';
 const monday = mondaySdk();
 monday.setApiVersion("2023-10");
 
-// Check if the app is installed and reset cookies if it's a new installation
-async function checkAppInstallation() {
-  const installIdKey = "app_install_id";
-  try {
-    const storedInstallId = await monday.storage.instance.getItem(installIdKey);
-    if (!storedInstallId?.data?.value) {
-      console.log("New installation detected. Resetting cookies...");
-      await monday.storage.instance.setItem(installIdKey, Date.now().toString());
-      await monday.storage.instance.deleteItem("cookie_consent");
-    } else {
-      console.log("Existing installation. No need to reset cookies.");
-    }
-  } catch (error) {
-    console.error("Error checking app installation:", error);
-  }
-}
+// // Check if the app is installed and reset cookies if it's a new installation
+// async function checkAppInstallation() {
+//   const installIdKey = "app_install_id";
+//   try {
+//     const storedInstallId = await monday.storage.instance.getItem(installIdKey);
+//     if (!storedInstallId?.data?.value) {
+//       console.log("New installation detected. Resetting cookies...");
+//       await monday.storage.instance.setItem(installIdKey, Date.now().toString());
+//       await monday.storage.instance.deleteItem("cookie_consent");
+//     } else {
+//       console.log("Existing installation. No need to reset cookies.");
+//     }
+//   } catch (error) {
+//     console.error("Error checking app installation:", error);
+//   }
+// }
 
-// Check if the user has accepted the cookie policy
-async function checkCookieConsent() {
-  try {
-    const response = await monday.storage.instance.getItem("cookie_consent");
-    return response?.data?.value === "true";
-  } catch (error) {
-    console.error("Error fetching cookie consent:", error);
-    return false;
-  }
-}
+// // Check if the user has accepted the cookie policy
+// async function checkCookieConsent() {
+//   try {
+//     const response = await monday.storage.instance.getItem("cookie_consent");
+//     return response?.data?.value === "true";
+//   } catch (error) {
+//     console.error("Error fetching cookie consent:", error);
+//     return false;
+//   }
+// }
 
-// Set cookie consent when the user accepts
-async function setCookieConsent() {
-  try {
-    await monday.storage.instance.setItem("cookie_consent", "true");
-    console.log("Cookie consent saved.");
-  } catch (error) {
-    console.error("Error setting cookie consent:", error);
-  }
-}
+// // Set cookie consent when the user accepts
+// async function setCookieConsent() {
+//   try {
+//     await monday.storage.instance.setItem("cookie_consent", "true");
+//     console.log("Cookie consent saved.");
+//   } catch (error) {
+//     console.error("Error setting cookie consent:", error);
+//   }
+// }
 const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo, appName, dashUrl, docLink, decodePart1, decodePart2, cookiepolicy }) => {
 
 
@@ -84,23 +86,26 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedisEditing, setStoredisEditing] = useState(false);
   const [warningMessage, setWarningMessage] = useState("");
   // const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
-  const [showPopup, setShowPopup] = useState(false);
-
-
+  // const [showPopup, setShowPopup] = useState(false);
+  
   useEffect(() => {
-    async function init() {
-      await checkAppInstallation();  // Ensure the app installation is checked first
-      const hasConsent = await checkCookieConsent();
-      setShowPopup(!hasConsent);  // Show popup if consent is not given
-    }
-    
-    init();
+    resetCookiesOnUninstall();
   }, []);
 
-  const handleAccept = async () => {
-    await setCookieConsent();
-    setShowPopup(false);
-  };
+  // useEffect(() => {
+  //   async function init() {
+  //     await checkAppInstallation();  // Ensure the app installation is checked first
+  //     const hasConsent = await checkCookieConsent();
+  //     setShowPopup(!hasConsent);  // Show popup if consent is not given
+  //   }
+    
+  //   init();
+  // }, []);
+
+  // const handleAccept = async () => {
+  //   await setCookieConsent();
+  //   setShowPopup(false);
+  // };
 
   var iscanva = false;
   if (dashUrl == 'Canva') {
@@ -405,12 +410,8 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   return (
     <div >
-    {showPopup && (
-        <div className="cookie-popup">
-          <p>This app uses cookies to enhance your experience.</p>
-          <button onClick={handleAccept}>Accept</button>
-        </div>
-      )}
+   
+   <CookieConsent />
 
       {(<div className="company">
         <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px" }} />

@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 require("./Header.css");
+var _CookieConsent = _interopRequireDefault(require("./CookieConsent"));
+var _storageService = require("./storageService");
 var _mondaySdkJs = _interopRequireDefault(require("monday-sdk-js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
@@ -22,45 +24,43 @@ function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; 
 const monday = (0, _mondaySdkJs.default)();
 monday.setApiVersion("2023-10");
 
-// Check if the app is installed and reset cookies if it's a new installation
-async function checkAppInstallation() {
-  const installIdKey = "app_install_id";
-  try {
-    var _storedInstallId$data;
-    const storedInstallId = await monday.storage.instance.getItem(installIdKey);
-    if (!(storedInstallId !== null && storedInstallId !== void 0 && (_storedInstallId$data = storedInstallId.data) !== null && _storedInstallId$data !== void 0 && _storedInstallId$data.value)) {
-      console.log("New installation detected. Resetting cookies...");
-      await monday.storage.instance.setItem(installIdKey, Date.now().toString());
-      await monday.storage.instance.deleteItem("cookie_consent");
-    } else {
-      console.log("Existing installation. No need to reset cookies.");
-    }
-  } catch (error) {
-    console.error("Error checking app installation:", error);
-  }
-}
+// // Check if the app is installed and reset cookies if it's a new installation
+// async function checkAppInstallation() {
+//   const installIdKey = "app_install_id";
+//   try {
+//     const storedInstallId = await monday.storage.instance.getItem(installIdKey);
+//     if (!storedInstallId?.data?.value) {
+//       console.log("New installation detected. Resetting cookies...");
+//       await monday.storage.instance.setItem(installIdKey, Date.now().toString());
+//       await monday.storage.instance.deleteItem("cookie_consent");
+//     } else {
+//       console.log("Existing installation. No need to reset cookies.");
+//     }
+//   } catch (error) {
+//     console.error("Error checking app installation:", error);
+//   }
+// }
 
-// Check if the user has accepted the cookie policy
-async function checkCookieConsent() {
-  try {
-    var _response$data;
-    const response = await monday.storage.instance.getItem("cookie_consent");
-    return (response === null || response === void 0 || (_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.value) === "true";
-  } catch (error) {
-    console.error("Error fetching cookie consent:", error);
-    return false;
-  }
-}
+// // Check if the user has accepted the cookie policy
+// async function checkCookieConsent() {
+//   try {
+//     const response = await monday.storage.instance.getItem("cookie_consent");
+//     return response?.data?.value === "true";
+//   } catch (error) {
+//     console.error("Error fetching cookie consent:", error);
+//     return false;
+//   }
+// }
 
-// Set cookie consent when the user accepts
-async function setCookieConsent() {
-  try {
-    await monday.storage.instance.setItem("cookie_consent", "true");
-    console.log("Cookie consent saved.");
-  } catch (error) {
-    console.error("Error setting cookie consent:", error);
-  }
-}
+// // Set cookie consent when the user accepts
+// async function setCookieConsent() {
+//   try {
+//     await monday.storage.instance.setItem("cookie_consent", "true");
+//     console.log("Cookie consent saved.");
+//   } catch (error) {
+//     console.error("Error setting cookie consent:", error);
+//   }
+// }
 const Header = _ref => {
   var _defaultUrl$match;
   let {
@@ -104,19 +104,27 @@ const Header = _ref => {
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
   const [warningMessage, setWarningMessage] = (0, _react.useState)("");
   // const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
-  const [showPopup, setShowPopup] = (0, _react.useState)(false);
+  // const [showPopup, setShowPopup] = useState(false);
+
   (0, _react.useEffect)(() => {
-    async function init() {
-      await checkAppInstallation(); // Ensure the app installation is checked first
-      const hasConsent = await checkCookieConsent();
-      setShowPopup(!hasConsent); // Show popup if consent is not given
-    }
-    init();
+    (0, _storageService.resetCookiesOnUninstall)();
   }, []);
-  const handleAccept = async () => {
-    await setCookieConsent();
-    setShowPopup(false);
-  };
+
+  // useEffect(() => {
+  //   async function init() {
+  //     await checkAppInstallation();  // Ensure the app installation is checked first
+  //     const hasConsent = await checkCookieConsent();
+  //     setShowPopup(!hasConsent);  // Show popup if consent is not given
+  //   }
+
+  //   init();
+  // }, []);
+
+  // const handleAccept = async () => {
+  //   await setCookieConsent();
+  //   setShowPopup(false);
+  // };
+
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
@@ -378,11 +386,7 @@ const Header = _ref => {
       }
     }
   };
-  return /*#__PURE__*/_react.default.createElement("div", null, showPopup && /*#__PURE__*/_react.default.createElement("div", {
-    className: "cookie-popup"
-  }, /*#__PURE__*/_react.default.createElement("p", null, "This app uses cookies to enhance your experience."), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: handleAccept
-  }, "Accept")), /*#__PURE__*/_react.default.createElement("div", {
+  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_CookieConsent.default, null), /*#__PURE__*/_react.default.createElement("div", {
     className: "company"
   }, /*#__PURE__*/_react.default.createElement("img", {
     src: logo,
