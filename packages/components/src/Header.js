@@ -28,7 +28,6 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [height, setHeight] = useState(400);
   const [embedUrl, setEmbedUrl] = useState(defUrl);
   const [showWarning, setShowWarning] = useState(false);
-  const [showWarning2, setShowWarning2] = useState(false);
   const [showdimensionWarning, setShowdimWarning] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [show, setShow] = useState(false);
@@ -351,7 +350,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   const handleWidthChange = (e) => {
     setWidth(e.target.value); // Allow user to type freely
-   
+    validateWidth(value);
   };
 
   const handleHeightChange = (e) => {
@@ -359,29 +358,25 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   };
 
   const validateWidth = () => {
-    if ( /^0\d+$/.test(width) || Number(width)<0) {
+    if ( /^0\d+$/.test(width)) {
       
-      //alert("Enter a valid positive number. Leading zeros are not allowed.");
+      alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
-      setShowWarning2(true);
       setWidth(DEFAULT_WIDTH);
     } else {
       setShowdimWarning(false);
-      setShowWarning2(false);
-      setWidth(width ? Math.max(Number(width),600) : DEFAULT_WIDTH);
+      setWidth(width ? Number(width) : DEFAULT_WIDTH);
     }
   };
 
   const validateHeight = () => {
-    if ( /^0\d+$/.test(height)|| Number(height)<0) {
-      //alert("Enter a valid positive number. Leading zeros are not allowed.");
+    if ( /^0\d+$/.test(height)) {
+      alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
-      setShowWarning2(true);
       setHeight(DEFAULT_HEIGHT);
     } else {
       setShowdimWarning(false);
-      setShowWarning2(false);
-      setHeight(height ? Math.max(Number(height),400) : DEFAULT_HEIGHT); 
+      setHeight(height ? Number(height) : DEFAULT_HEIGHT); 
     }
   };
 
@@ -663,7 +658,6 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
               type="number"
               value={width}
               onChange={handleWidthChange}
-              onBlur={validateWidth}
               style={{ marginLeft: "10px" }}
             />
           </label>
@@ -673,7 +667,6 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
               type="number"
               value={height}
               onChange={handleHeightChange}
-              onBlur={validateHeight}
               style={{ marginLeft: "10px" }}
             />
           </label>
@@ -691,12 +684,6 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       {showWarning && (
         <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
           Invalid {dashUrl} URL. Please check the link and try again.
-        </div>
-      )}
-
-{showWarning2 && (
-        <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
-          Enter a valid positive number. Leading zeros are not allowed.
         </div>
       )}
 
