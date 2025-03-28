@@ -1,6 +1,4 @@
 "use strict";
-const { useState } = require("react");
-const { useEffect } = require("react");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -48,6 +46,7 @@ const Header = _ref => {
   const [height, setHeight] = (0, _react.useState)(400);
   const [embedUrl, setEmbedUrl] = (0, _react.useState)(defUrl);
   const [showWarning, setShowWarning] = (0, _react.useState)(false);
+  const [showWarning2, setShowWarning2] = (0, _react.useState)(false);
   const [showdimensionWarning, setShowdimWarning] = (0, _react.useState)(false);
   const [submitted, setSubmitted] = (0, _react.useState)(false);
   const [show, setShow] = (0, _react.useState)(false);
@@ -64,7 +63,7 @@ const Header = _ref => {
   const [storedshowEdit, setStoredShowEdit] = (0, _react.useState)("");
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
   const [cookieConsent, setCookieConsent] = (0, _react.useState)(null); // Initially null to indicate not yet checked
-  const [loading, setLoading] = useState(true);
+
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
@@ -263,22 +262,7 @@ const Header = _ref => {
         monday.storage.instance.setItem("submitted", submitted);
       }
     }, 10000); // 10 second
-  };const styles = document.createElement("style");
-  styles.innerHTML = `
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  `;
-  document.head.appendChild(styles);
-    useEffect(() => {
-      setLoading(true);
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 1500);
-    
-      return () => clearTimeout(timer); // Cleanup in case component unmounts
-    }, [embedUrl]);
+  };
   (0, _react.useEffect)(() => {
     resetTimeout();
     const handleActivity = () => {
@@ -345,29 +329,32 @@ const Header = _ref => {
   const DEFAULT_HEIGHT = 400;
   const handleWidthChange = e => {
     setWidth(e.target.value); // Allow user to type freely
-    validateWidth(value);
   };
   const handleHeightChange = e => {
     setHeight(e.target.value); // Allow user to type freely
   };
   const validateWidth = () => {
-    if (/^0\d+$/.test(width)) {
-      alert("Enter a valid positive number. Leading zeros are not allowed.");
+    if (/^0\d+$/.test(width) || Number(width) < 0) {
+      //alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
+      setShowWarning2(true);
       setWidth(DEFAULT_WIDTH);
     } else {
       setShowdimWarning(false);
-      setWidth(width ? Number(width) : DEFAULT_WIDTH);
+      setShowWarning2(false);
+      setWidth(width ? Math.max(Number(width), 600) : DEFAULT_WIDTH);
     }
   };
   const validateHeight = () => {
-    if (/^0\d+$/.test(height)) {
-      alert("Enter a valid positive number. Leading zeros are not allowed.");
+    if (/^0\d+$/.test(height) || Number(height) < 0) {
+      //alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
+      setShowWarning2(true);
       setHeight(DEFAULT_HEIGHT);
     } else {
       setShowdimWarning(false);
-      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
+      setShowWarning2(false);
+      setHeight(height ? Math.max(Number(height), 400) : DEFAULT_HEIGHT);
     }
   };
   const toggleEditMode = () => {
@@ -437,28 +424,7 @@ const Header = _ref => {
       width: 'auto',
       height: 'auto'
     }
-  }, /*#__PURE__*/ loading &&
-  _react.default.createElement(
-    "div",
-    {
-      style: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100px",
-      },
-    },
-    /*#__PURE__*/ _react.default.createElement("div", {
-      style: {
-        width: "40px",
-        height: "40px",
-        border: "4px solid rgb(255, 255, 255)",
-        borderTop: "4px solid #000",
-        borderRadius: "50%",
-        animation: "spin 1s linear infinite",
-      },
-    })
-  ),/*#__PURE__*/_react.default.createElement("iframe", {
+  }, /*#__PURE__*/_react.default.createElement("iframe", {
     ref: iframeRef,
     src: embedUrl,
     width: /^\d+$/.test(String(width)) && String(width).startsWith("0") && width !== "0" ? 600 : Math.max(600, Number(width) || 600),
@@ -675,6 +641,7 @@ const Header = _ref => {
     type: "number",
     value: width,
     onChange: handleWidthChange,
+    onBlur: validateWidth,
     style: {
       marginLeft: "10px"
     }
@@ -686,6 +653,7 @@ const Header = _ref => {
     type: "number",
     value: height,
     onChange: handleHeightChange,
+    onBlur: validateHeight,
     style: {
       marginLeft: "10px"
     }
@@ -711,7 +679,14 @@ const Header = _ref => {
       margin: "5px",
       width: "600px"
     }
-  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), /*#__PURE__*/_react.default.createElement("div", {
+  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), showWarning2 && /*#__PURE__*/_react.default.createElement("div", {
+    className: "alert alert-danger",
+    role: "alert",
+    style: {
+      margin: "5px",
+      width: "600px"
+    }
+  }, "Enter a valid positive number. Leading zeros are not allowed."), /*#__PURE__*/_react.default.createElement("div", {
     className: "details"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info"
