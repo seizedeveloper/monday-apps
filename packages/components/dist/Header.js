@@ -7,6 +7,7 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 require("./Header.css");
 var _mondaySdkJs = _interopRequireDefault(require("monday-sdk-js"));
+var _dompurify = _interopRequireDefault(require("dompurify"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -37,17 +38,21 @@ const Header = _ref => {
   } = _ref;
   const monday = (0, _mondaySdkJs.default)();
   monday.setApiVersion("2023-10");
+  const sanitizeInput = input => _dompurify.default.sanitize(input);
+  const parseSafeInt = function (value) {
+    let defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? defaultValue : parsed;
+  };
   const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
-  const defaultUrl = defaulturl;
+  const defaultUrl = sanitizeInput(defaulturl);
   const id = defaultUrl === null || defaultUrl === void 0 || (_defaultUrl$match = defaultUrl.match(matchingSequence2)) === null || _defaultUrl$match === void 0 ? void 0 : _defaultUrl$match[1];
   const defUrl = defaulturl;
-  const [url, setUrl] = (0, _react.useState)('');
+  const [url, setUrl] = (0, _react.useState)(defaultUrl);
   const [width, setWidth] = (0, _react.useState)(600);
   const [height, setHeight] = (0, _react.useState)(400);
   const [embedUrl, setEmbedUrl] = (0, _react.useState)(defUrl);
   const [showWarning, setShowWarning] = (0, _react.useState)(false);
-  const [showWarning2, setShowWarning2] = (0, _react.useState)(false);
-  const [showdimensionWarning, setShowdimWarning] = (0, _react.useState)(false);
   const [submitted, setSubmitted] = (0, _react.useState)(false);
   const [show, setShow] = (0, _react.useState)(false);
   const [showEdit, setShowEdit] = (0, _react.useState)(false);
@@ -62,118 +67,84 @@ const Header = _ref => {
   const [storedsubmitted, setStoredSubmitted] = (0, _react.useState)("");
   const [storedshowEdit, setStoredShowEdit] = (0, _react.useState)("");
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
-  const [cookieConsent, setCookieConsent] = (0, _react.useState)(null); // Initially null to indicate not yet checked
-
+  const [cookieConsent, setCookieConsent] = (0, _react.useState)(true); // Initially null to indicate not yet checked
+  const [loading, setLoading] = (0, _react.useState)(true);
   var iscanva = false;
-  if (dashUrl == 'Canva') {
+  if (dashUrl == "Canva") {
     var iscanva = true;
   }
 
   // Load the stored cookie consent value when the app loads
   (0, _react.useEffect)(() => {
-    monday.storage.getItem('cookieConsent').then(res => {
+    monday.storage.getItem("cookieConsent").then(res => {
       var _res$data;
       const value = (_res$data = res.data) === null || _res$data === void 0 ? void 0 : _res$data.value;
-      console.log('Stored Cookie Consent:', value);
+      console.log("Stored Cookie Consent:", value);
       setCookieConsent(value !== null && value !== void 0 ? value : false); // Default to false if undefined
     });
   }, []);
   const handleAccept = () => {
     setCookieConsent(true);
-    monday.storage.setItem('cookieConsent', true).then(() => {
-      console.log('Cookie Consent set to true');
+    monday.storage.setItem("cookieConsent", true).then(() => {
+      console.log("Cookie Consent set to true");
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true
+      });
     });
   };
   (0, _react.useEffect)(() => {
     setShowWarning(false);
-    setShowdimWarning(false);
   }, [embedUrl]);
   (0, _react.useEffect)(() => {
-    monday.storage.instance.getItem('url').then(res => {
+    monday.storage.instance.getItem("url").then(res => {
       var _res$data2;
-      const value = (_res$data2 = res.data) === null || _res$data2 === void 0 ? void 0 : _res$data2.value;
+      const value = sanitizeInput((_res$data2 = res.data) === null || _res$data2 === void 0 ? void 0 : _res$data2.value);
       console.log(value);
-      setStoredUrl(value !== null && value !== void 0 ? value : ''); // Provide a default value if undefined
+      setStoredUrl(value !== null && value !== void 0 ? value : ""); // Provide a default value if undefined
     });
-    monday.storage.instance.getItem('height').then(res => {
+    monday.storage.instance.getItem("height").then(res => {
       var _res$data3;
-      const value = (_res$data3 = res.data) === null || _res$data3 === void 0 ? void 0 : _res$data3.value;
+      const value = sanitizeInput((_res$data3 = res.data) === null || _res$data3 === void 0 ? void 0 : _res$data3.value);
       console.log(value);
       setStoredHeight(value !== null && value !== void 0 ? value : 0); // Provide a sensible default, e.g., 0 for numbers
     });
-    monday.storage.instance.getItem('width').then(res => {
+    monday.storage.instance.getItem("width").then(res => {
       var _res$data4;
-      const value = (_res$data4 = res.data) === null || _res$data4 === void 0 ? void 0 : _res$data4.value;
+      const value = sanitizeInput((_res$data4 = res.data) === null || _res$data4 === void 0 ? void 0 : _res$data4.value);
       console.log(value);
       setStoredWidth(value !== null && value !== void 0 ? value : 0);
     });
-    monday.storage.instance.getItem('show').then(res => {
+    monday.storage.instance.getItem("show").then(res => {
       var _res$data5;
       const value = (_res$data5 = res.data) === null || _res$data5 === void 0 ? void 0 : _res$data5.value;
       console.log(value);
       setStoredShow(value !== null && value !== void 0 ? value : false); // Provide default, e.g., false for booleans
     });
-    monday.storage.instance.getItem('submitted').then(res => {
+    monday.storage.instance.getItem("submitted").then(res => {
       var _res$data6;
       const value = (_res$data6 = res.data) === null || _res$data6 === void 0 ? void 0 : _res$data6.value;
       console.log(value);
       setStoredSubmitted(value !== null && value !== void 0 ? value : false);
     });
-    monday.storage.instance.getItem('showEdit').then(res => {
+    monday.storage.instance.getItem("showEdit").then(res => {
       var _res$data7;
       const value = (_res$data7 = res.data) === null || _res$data7 === void 0 ? void 0 : _res$data7.value;
       console.log(value);
       setStoredShowEdit(value !== null && value !== void 0 ? value : false);
     });
     if (ifEditing) {
-      monday.storage.instance.getItem('isEditing').then(res => {
+      monday.storage.instance.getItem("isEditing").then(res => {
         var _res$data8;
         const value = (_res$data8 = res.data) === null || _res$data8 === void 0 ? void 0 : _res$data8.value;
         console.log(value);
         setStoredisEditing(value !== null && value !== void 0 ? value : false);
       });
     }
-    monday.execute('valueCreatedForUser'); // Value-created event when loading saved state
+    monday.execute("valueCreatedForUser"); // Value-created event when loading saved state
   }, []);
-
-  // useEffect(() => {
-  //   const urlToUse = storedurl && storedurl !== defUrl ? storedurl : defaultUrl;
-  //   setUrl(urlToUse);
-
-  //   // Find the matching pattern
-  //   const loomIdMatch = urlToUse.match(matchingSequence) || urlToUse.match(matchingSequence2);
-
-  //   if (loomIdMatch) {
-  //     const id1 = loomIdMatch[1];
-  //     const id2 = loomIdMatch[2];
-
-  //     let embedUrl;
-  //     if (iscanva && id1 && id2) {
-  //       embedUrl = urlToUse.match(matchingSequence)
-  //       ?  `https://www.canva.com/design/${id1}/${id2}/view?embed`
-  //       : `https://www.loom.com/embed/${id}?autoplay=false`;
-
-  //     } else {
-  //       const id = id1 || id2;
-  //       embedUrl = urlToUse.match(matchingSequence)
-  //         ? `${decodePart1}${id}${decodePart2 ?? ''}`
-  //         : `https://www.loom.com/embed/${id}?autoplay=false`;
-  //     }
-
-  //     setEmbedUrl(embedUrl);
-  //     setShowWarning(false);
-  //   } else {
-  //     setShowWarning(true);
-  //     const loomIdMatch = defaultUrl.match(matchingSequence2)
-  //     id =loomIdMatch[1] || loomIdMatch[2];
-  //     setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`); // Fallback URL
-  //   }
-
-  //   monday.execute("valueCreatedForUser"); // Trigger event once URL is set
-  // }, [storedurl, defUrl, defaultUrl, matchingSequence, matchingSequence2, iscanva]);
-
   (0, _react.useEffect)(() => {
-    if (storedurl !== '' && storedurl !== defUrl) {
+    if (storedurl) {
       setUrl(storedurl);
       const loomIdMatch = storedurl === null || storedurl === void 0 ? void 0 : storedurl.match(matchingSequence);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
@@ -182,20 +153,14 @@ const Header = _ref => {
           setEmbedUrl("https://www.canva.com/design/".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
         } else {
           const id = loomIdMatch[1] || loomIdMatch[2];
-          setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
+          setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ""));
         }
         setShowWarning(false);
       } else {
-        setShowWarning(true);
-        const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
-        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-          setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
-        } else {
-          setShowWarning(true);
-          setEmbedUrl(defUrl);
-        }
+        // setShowWarning(true);
+        setEmbedUrl(defUrl);
       }
-      monday.execute('valueCreatedForUser'); // Value-created event when URL is successfully set
+      monday.execute("valueCreatedForUser"); // Value-created event when URL is successfully set
     } else {
       setUrl(defaultUrl);
       const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
@@ -226,13 +191,13 @@ const Header = _ref => {
   (0, _react.useEffect)(() => {
     if (storedsubmitted) {
       setSubmitted(storedsubmitted);
-      monday.execute('valueCreatedForUser'); // Value-created event when content is submitted
+      monday.execute("valueCreatedForUser"); // Value-created event when content is submitted
     }
   }, [storedsubmitted]);
   (0, _react.useEffect)(() => {
     if (storedshowEdit) {
       setShowEdit(storedshowEdit);
-      monday.execute('valueCreatedForUser'); // Value-created event when edit mode is accessed
+      monday.execute("valueCreatedForUser"); // Value-created event when edit mode is accessed
     }
   }, [storedshowEdit]);
   (0, _react.useEffect)(() => {
@@ -270,12 +235,12 @@ const Header = _ref => {
     };
 
     // Listen for keypresses and mouse movements to detect activity
-    window.addEventListener('keydown', handleActivity);
-    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener("keydown", handleActivity);
+    window.addEventListener("mousemove", handleActivity);
     return () => {
       // Clean up event listeners on unmount
-      window.removeEventListener('keydown', handleActivity);
-      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener("keydown", handleActivity);
+      window.removeEventListener("mousemove", handleActivity);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [show, submitted, showWarning]);
@@ -284,7 +249,7 @@ const Header = _ref => {
     setUrl(inputUrl);
     monday.storage.instance.setItem("url", inputUrl);
     // localStorage.setItem('url', inputUrl) ;
-    // setUrlSetting(false) ; 
+    // setUrlSetting(false) ;
     const loomIdMatch = inputUrl === null || inputUrl === void 0 ? void 0 : inputUrl.match(matchingSequence);
     if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
       if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
@@ -292,7 +257,7 @@ const Header = _ref => {
         setEmbedUrl("https://www.canva.com/design/".concat(loomIdMatch[1], "/").concat(embedId, "/view?embed"));
       } else {
         const id = loomIdMatch[1] || loomIdMatch[2];
-        setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ''));
+        setEmbedUrl("".concat(decodePart1).concat(id).concat(decodePart2 !== null && decodePart2 !== void 0 ? decodePart2 : ""));
       }
       // setShow(false);
       setShowWarning(false);
@@ -325,37 +290,22 @@ const Header = _ref => {
       monday.storage.instance.setItem("url", defUrl);
     }
   };
-  const DEFAULT_WIDTH = 600;
-  const DEFAULT_HEIGHT = 400;
-  const handleWidthChange = e => {
-    setWidth(e.target.value); // Allow user to type freely
+  const handleWidthChange = event => {
+    console.log("Bhai width function call ho raha hai");
+    const value = parseInt(event.target.value, 10);
+    // setWidthSetting(false) ;
+    // setWidth(value > 0 ? value : 600);
+    setWidth(value);
+    // localStorage.setItem('width', value) ;
+    monday.storage.instance.setItem("width", value);
   };
-  const handleHeightChange = e => {
-    setHeight(e.target.value); // Allow user to type freely
-  };
-  const validateWidth = () => {
-    if (/^0\d+$/.test(width) || Number(width) < 0) {
-      //alert("Enter a valid positive number. Leading zeros are not allowed.");
-      setShowdimWarning(true);
-      setShowWarning2(true);
-      setWidth(DEFAULT_WIDTH);
-    } else {
-      setShowdimWarning(false);
-      setShowWarning2(false);
-      setWidth(width ? Math.max(Number(width), 600) : DEFAULT_WIDTH);
-    }
-  };
-  const validateHeight = () => {
-    if (/^0\d+$/.test(height) || Number(height) < 0) {
-      //alert("Enter a valid positive number. Leading zeros are not allowed.");
-      setShowdimWarning(true);
-      setShowWarning2(true);
-      setHeight(DEFAULT_HEIGHT);
-    } else {
-      setShowdimWarning(false);
-      setShowWarning2(false);
-      setHeight(height ? Math.max(Number(height), 400) : DEFAULT_HEIGHT);
-    }
+  const handleHeightChange = event => {
+    const value = parseInt(event.target.value, 10);
+    // setHeightSetting(false) ;
+    // setHeight(value > 0 ? value : 400);
+    setHeight(value);
+    // localStorage.setItem('height', value) ;
+    monday.storage.instance.setItem("height", value);
   };
   const toggleEditMode = () => {
     const newEditMode = !isEditing;
@@ -377,7 +327,7 @@ const Header = _ref => {
     className: "cookie-overlay"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "cookie-content"
-  }, /*#__PURE__*/_react.default.createElement("h1", null, "Cookie Consent"), /*#__PURE__*/_react.default.createElement("p", null, " We use cookies to enhance your user experience. By using our app, you agree to our use of cookies.", " "), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("a", {
+  }, /*#__PURE__*/_react.default.createElement("h1", null, "Cookie Consent"), /*#__PURE__*/_react.default.createElement("p", null, " ", "We use cookies to enhance your user experience. By using our app, you agree to our use of cookies.", " "), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("a", {
     href: cookiepolicy
   }, "Learn more.")), /*#__PURE__*/_react.default.createElement("button", {
     className: "accept-button",
@@ -389,9 +339,7 @@ const Header = _ref => {
     alt: "Company logo",
     style: {
       height: "50px",
-      width: "50px",
-      position: "absolute",
-      left: "0px"
+      width: "50px"
     }
   }), /*#__PURE__*/_react.default.createElement("div", {
     className: "name"
@@ -406,7 +354,7 @@ const Header = _ref => {
       textAlign: "left",
       color: fontCol
     }
-  }, " by Satisfaction Drivers"))), embedUrl && /*#__PURE__*/_react.default.createElement("div", {
+  }, " ", "by Satisfaction Drivers"))), embedUrl && /*#__PURE__*/_react.default.createElement("div", {
     onMouseEnter: () => {
       if (submitted) {
         setShowEdit(true);
@@ -420,23 +368,44 @@ const Header = _ref => {
       }
     },
     style: {
-      position: 'relative',
-      width: 'auto',
-      height: 'auto'
+      position: "relative",
+      width: "100%",
+      height: "auto"
     }
-  }, /*#__PURE__*/_react.default.createElement("iframe", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      position: "relative",
+      width: "100%",
+      height: "auto"
+    }
+  }, loading && /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      background: "#fff",
+      padding: "10px",
+      borderRadius: "5px",
+      boxShadow: "0 0 10px rgba(0,0,0,0.2)"
+    }
+  }, /*#__PURE__*/_react.default.createElement("p", {
+    style: {
+      color: "black",
+      fontWeight: "bold"
+    }
+  }, "Loading...")), /*#__PURE__*/_react.default.createElement("iframe", {
     ref: iframeRef,
     src: embedUrl,
-    width: /^\d+$/.test(String(width)) && String(width).startsWith("0") && width !== "0" ? 600 : Math.max(600, Number(width) || 600),
-    height: /^\d+$/.test(String(height)) && String(height).startsWith("0") && height !== "0" ? 400 : Math.max(400, Number(height) || 400),
+    width: width > 0 ? width : 600,
+    height: height > 0 ? height : 400,
     frameBorder: "0",
     allowFullScreen: true,
     title: "Video Player",
     style: {
-      marginBottom: "10px",
-      marginRight: "0%"
+      marginBottom: "10px"
     }
-  }), submitted && !show && showEdit && /*#__PURE__*/_react.default.createElement("i", {
+  })), submitted && !show && showEdit && /*#__PURE__*/_react.default.createElement("i", {
     class: "fa-solid fa-pen-to-square fa-xl",
     onClick: () => {
       setShow(true);
@@ -445,17 +414,17 @@ const Header = _ref => {
     style: {
       width: "40px",
       height: "40px",
-      position: 'absolute',
-      bottom: '75px',
-      right: '0',
+      position: "absolute",
+      bottom: "75px",
+      right: "0",
       zIndex: 10,
       // marginTop: '20px',
-      paddingTop: '18px',
-      paddingLeft: '5px',
+      paddingTop: "18px",
+      paddingLeft: "5px",
       zIndex: 10,
-      backgroundColor: '#f1f3f4f2',
+      backgroundColor: "#f1f3f4f2",
       borderRadius: "40px",
-      color: 'black'
+      color: "black"
     }
   })), ifEditing && show && !showWarning && embedUrl != defUrl && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("button", {
     type: "button",
@@ -466,43 +435,43 @@ const Header = _ref => {
       // bottom: '18px',
       // right: '140px',
       zIndex: 10,
-      padding: '3px 6px',
-      borderRadius: '20px',
-      backgroundColor: isEditing ? '#0d6efd' : '#E5E5EA',
-      color: isEditing ? 'white' : 'black',
-      border: 'none',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
-      fontSize: '16px',
-      transition: 'all 0.3s ease',
-      cursor: 'pointer',
-      outline: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      margin: 'auto'
+      padding: "3px 6px",
+      borderRadius: "20px",
+      backgroundColor: isEditing ? "#0d6efd" : "#E5E5EA",
+      color: isEditing ? "white" : "black",
+      border: "none",
+      boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
+      fontSize: "16px",
+      transition: "all 0.3s ease",
+      cursor: "pointer",
+      outline: "none",
+      display: "flex",
+      alignItems: "center",
+      margin: "auto"
     },
-    onMouseDown: e => e.currentTarget.style.transform = 'scale(0.95)',
-    onMouseUp: e => e.currentTarget.style.transform = 'scale(1)'
+    onMouseDown: e => e.currentTarget.style.transform = "scale(0.95)",
+    onMouseUp: e => e.currentTarget.style.transform = "scale(1)"
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      width: '30px',
-      height: '15px',
-      backgroundColor: isEditing ? 'white' : '#C7C7CC',
-      borderRadius: '15px',
-      position: 'relative',
-      marginRight: '10px',
-      transition: 'background-color 0.3s ease'
+      width: "30px",
+      height: "15px",
+      backgroundColor: isEditing ? "white" : "#C7C7CC",
+      borderRadius: "15px",
+      position: "relative",
+      marginRight: "10px",
+      transition: "background-color 0.3s ease"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      width: '13px',
-      height: '13px',
-      backgroundColor: isEditing ? '#007AFF' : 'white',
-      borderRadius: '50%',
-      position: 'absolute',
-      top: '1px',
-      left: isEditing ? '15px' : '1px',
-      transition: 'left 0.3s ease',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.15)'
+      width: "13px",
+      height: "13px",
+      backgroundColor: isEditing ? "#007AFF" : "white",
+      borderRadius: "50%",
+      position: "absolute",
+      top: "1px",
+      left: isEditing ? "15px" : "1px",
+      transition: "left 0.3s ease",
+      boxShadow: "0 2px 5px rgba(0,0,0,0.15)"
     }
   })), isEditing ? "Edit" : "View"), /*#__PURE__*/_react.default.createElement("br", null)), ifEditing && !submitted && !showWarning && embedUrl != defUrl && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("button", {
     type: "button",
@@ -513,43 +482,43 @@ const Header = _ref => {
       // bottom: '18px',
       // right: '140px',
       zIndex: 10,
-      padding: '3px 6px',
-      borderRadius: '20px',
-      backgroundColor: isEditing ? '#0d6efd' : '#E5E5EA',
-      color: isEditing ? 'white' : 'black',
-      border: 'none',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
-      fontSize: '16px',
-      transition: 'all 0.3s ease',
-      cursor: 'pointer',
-      outline: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      margin: 'auto'
+      padding: "3px 6px",
+      borderRadius: "20px",
+      backgroundColor: isEditing ? "#0d6efd" : "#E5E5EA",
+      color: isEditing ? "white" : "black",
+      border: "none",
+      boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
+      fontSize: "16px",
+      transition: "all 0.3s ease",
+      cursor: "pointer",
+      outline: "none",
+      display: "flex",
+      alignItems: "center",
+      margin: "auto"
     },
-    onMouseDown: e => e.currentTarget.style.transform = 'scale(0.95)',
-    onMouseUp: e => e.currentTarget.style.transform = 'scale(1)'
+    onMouseDown: e => e.currentTarget.style.transform = "scale(0.95)",
+    onMouseUp: e => e.currentTarget.style.transform = "scale(1)"
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      width: '30px',
-      height: '15px',
-      backgroundColor: isEditing ? 'white' : '#C7C7CC',
-      borderRadius: '15px',
-      position: 'relative',
-      marginRight: '10px',
-      transition: 'background-color 0.3s ease'
+      width: "30px",
+      height: "15px",
+      backgroundColor: isEditing ? "white" : "#C7C7CC",
+      borderRadius: "15px",
+      position: "relative",
+      marginRight: "10px",
+      transition: "background-color 0.3s ease"
     }
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      width: '13px',
-      height: '13px',
-      backgroundColor: isEditing ? '#007AFF' : 'white',
-      borderRadius: '50%',
-      position: 'absolute',
-      top: '1px',
-      left: isEditing ? '15px' : '1px',
-      transition: 'left 0.3s ease',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.15)'
+      width: "13px",
+      height: "13px",
+      backgroundColor: isEditing ? "#007AFF" : "white",
+      borderRadius: "50%",
+      position: "absolute",
+      top: "1px",
+      left: isEditing ? "15px" : "1px",
+      transition: "left 0.3s ease",
+      boxShadow: "0 2px 5px rgba(0,0,0,0.15)"
     }
   })), isEditing ? "Edit" : "View"), /*#__PURE__*/_react.default.createElement("br", null)), !submitted && /*#__PURE__*/_react.default.createElement("div", {
     style: {
@@ -574,10 +543,7 @@ const Header = _ref => {
   }, "Width:", /*#__PURE__*/_react.default.createElement("input", {
     type: "number",
     value: width,
-    onChange: handleWidthChange // Allows typing
-    ,
-    onBlur: validateWidth // Validates after user finishes typing
-    ,
+    onChange: handleWidthChange,
     style: {
       marginLeft: "10px"
     }
@@ -588,10 +554,7 @@ const Header = _ref => {
   }, "Height:", /*#__PURE__*/_react.default.createElement("input", {
     type: "number",
     value: height,
-    onChange: handleHeightChange // Allows typing
-    ,
-    onBlur: validateHeight // Validates after user finishes typing
-    ,
+    onChange: handleHeightChange,
     style: {
       marginLeft: "10px"
     }
@@ -641,7 +604,6 @@ const Header = _ref => {
     type: "number",
     value: width,
     onChange: handleWidthChange,
-    onBlur: validateWidth,
     style: {
       marginLeft: "10px"
     }
@@ -653,7 +615,6 @@ const Header = _ref => {
     type: "number",
     value: height,
     onChange: handleHeightChange,
-    onBlur: validateHeight,
     style: {
       marginLeft: "10px"
     }
@@ -679,14 +640,7 @@ const Header = _ref => {
       margin: "5px",
       width: "600px"
     }
-  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), showWarning2 && /*#__PURE__*/_react.default.createElement("div", {
-    className: "alert alert-danger",
-    role: "alert",
-    style: {
-      margin: "5px",
-      width: "600px"
-    }
-  }, "Enter a valid positive number. Leading zeros are not allowed."), /*#__PURE__*/_react.default.createElement("div", {
+  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), /*#__PURE__*/_react.default.createElement("div", {
     className: "details"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info"
