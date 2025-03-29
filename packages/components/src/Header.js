@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './Header.css';
-import mondaySdk from 'monday-sdk-js';
+import React, { useState, useEffect, useRef } from "react";
+import "./Header.css";
+import mondaySdk from "monday-sdk-js";
+import DOMPurify from "dompurify";
 
 //defaultUrl
 //matching sequence
@@ -11,24 +12,41 @@ import mondaySdk from 'monday-sdk-js';
 //documentation link
 //const Player = ( {fontCol, bgCol,defaulturl,matchingSequence,ifEditing,logo,appName,dashUrl,docLink} ) => {
 
-
-const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo, appName, dashUrl, docLink, decodePart1, decodePart2, cookiepolicy }) => {
-
+const Header = ({
+  fontCol,
+  bgCol,
+  defaulturl,
+  matchingSequence,
+  ifEditing,
+  logo,
+  appName,
+  dashUrl,
+  docLink,
+  decodePart1,
+  decodePart2,
+  cookiepolicy,
+}) => {
   const monday = mondaySdk();
   monday.setApiVersion("2023-10");
+  const sanitizeInput = (input) => DOMPurify.sanitize(input);
+  const parseSafeInt = (value, defaultValue = 100) => {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? defaultValue : parsed;
+  }
 
-  const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
+  
 
-  const defaultUrl = defaulturl;
+  const matchingSequence2 =
+    /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
+
+  const defaultUrl = sanitizeInput(defaulturl);
   const id = defaultUrl?.match(matchingSequence2)?.[1];
   const defUrl = defaulturl;
-
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(defaultUrl);
   const [width, setWidth] = useState(600);
   const [height, setHeight] = useState(400);
   const [embedUrl, setEmbedUrl] = useState(defUrl);
   const [showWarning, setShowWarning] = useState(false);
-  const [showdimensionWarning, setShowdimWarning] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [show, setShow] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -43,162 +61,108 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedsubmitted, setStoredSubmitted] = useState("");
   const [storedshowEdit, setStoredShowEdit] = useState("");
   const [storedisEditing, setStoredisEditing] = useState(false);
-  const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
-
+  const [cookieConsent, setCookieConsent] = useState(true); // Initially null to indicate not yet checked
+  const [loading, setLoading] = useState(true);
   var iscanva = false;
-  if (dashUrl == 'Canva') {
+  if (dashUrl == "Canva") {
     var iscanva = true;
   }
- 
- // Load the stored cookie consent value when the app loads
- useEffect(() => {
 
-
-  monday.storage.getItem('cookieConsent').then((res) => {
-    const value = res.data?.value;
-    console.log('Stored Cookie Consent:', value);
-    setCookieConsent(value ?? false); // Default to false if undefined
-  });
-}, []);
+  // Load the stored cookie consent value when the app loads
+  useEffect(() => {
+    monday.storage.getItem("cookieConsent").then((res) => {
+      const value = res.data?.value;
+      console.log("Stored Cookie Consent:", value);
+      setCookieConsent(value ?? false); // Default to false if undefined
+    });
+  }, []);
 
   const handleAccept = () => {
     setCookieConsent(true);
-    monday.storage.setItem('cookieConsent', true).then(() => {
-      console.log('Cookie Consent set to true');
+    monday.storage.setItem("cookieConsent", true).then(() => {
+      console.log("Cookie Consent set to true");
+      res.cookie("token", token, { httpOnly: true, secure: true });
     });
   };
 
-
   useEffect(() => {
     setShowWarning(false);
-    setShowdimWarning(false);
   }, [embedUrl]);
   useEffect(() => {
-    monday.storage.instance.getItem('url').then(res => {
-      const value = res.data?.value;
+    monday.storage.instance.getItem("url").then((res) => {
+      const value = sanitizeInput(res.data?.value);
       console.log(value);
-      setStoredUrl(value ?? ''); // Provide a default value if undefined
+      setStoredUrl(value ?? ""); // Provide a default value if undefined
     });
 
-    monday.storage.instance.getItem('height').then(res => {
-      const value = res.data?.value;
+    monday.storage.instance.getItem("height").then((res) => {
+      const value = sanitizeInput(res.data?.value);
       console.log(value);
       setStoredHeight(value ?? 0); // Provide a sensible default, e.g., 0 for numbers
     });
 
-    monday.storage.instance.getItem('width').then(res => {
-      const value = res.data?.value;
+    monday.storage.instance.getItem("width").then((res) => {
+      const value = sanitizeInput(res.data?.value);
       console.log(value);
       setStoredWidth(value ?? 0);
     });
 
-    monday.storage.instance.getItem('show').then(res => {
+    monday.storage.instance.getItem("show").then((res) => {
       const value = res.data?.value;
       console.log(value);
       setStoredShow(value ?? false); // Provide default, e.g., false for booleans
     });
 
-
-    monday.storage.instance.getItem('submitted').then(res => {
+    monday.storage.instance.getItem("submitted").then((res) => {
       const value = res.data?.value;
       console.log(value);
       setStoredSubmitted(value ?? false);
     });
 
-    monday.storage.instance.getItem('showEdit').then(res => {
+    monday.storage.instance.getItem("showEdit").then((res) => {
       const value = res.data?.value;
       console.log(value);
       setStoredShowEdit(value ?? false);
     });
     if (ifEditing) {
-      monday.storage.instance.getItem('isEditing').then(res => {
+      monday.storage.instance.getItem("isEditing").then((res) => {
         const value = res.data?.value;
         console.log(value);
         setStoredisEditing(value ?? false);
       });
     }
-    monday.execute('valueCreatedForUser');  // Value-created event when loading saved state
+    monday.execute("valueCreatedForUser"); // Value-created event when loading saved state
   }, []);
 
-
-
-  // useEffect(() => {
-  //   const urlToUse = storedurl && storedurl !== defUrl ? storedurl : defaultUrl;
-  //   setUrl(urlToUse);
-  
-  //   // Find the matching pattern
-  //   const loomIdMatch = urlToUse.match(matchingSequence) || urlToUse.match(matchingSequence2);
-    
-  //   if (loomIdMatch) {
-  //     const id1 = loomIdMatch[1];
-  //     const id2 = loomIdMatch[2];
-  
-  //     let embedUrl;
-  //     if (iscanva && id1 && id2) {
-  //       embedUrl = urlToUse.match(matchingSequence)
-  //       ?  `https://www.canva.com/design/${id1}/${id2}/view?embed`
-  //       : `https://www.loom.com/embed/${id}?autoplay=false`;
-       
-  //     } else {
-  //       const id = id1 || id2;
-  //       embedUrl = urlToUse.match(matchingSequence)
-  //         ? `${decodePart1}${id}${decodePart2 ?? ''}`
-  //         : `https://www.loom.com/embed/${id}?autoplay=false`;
-  //     }
-  
-  //     setEmbedUrl(embedUrl);
-  //     setShowWarning(false);
-  //   } else {
-  //     setShowWarning(true);
-  //     const loomIdMatch = defaultUrl.match(matchingSequence2)
-  //     id =loomIdMatch[1] || loomIdMatch[2];
-  //     setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`); // Fallback URL
-  //   }
-  
-  //   monday.execute("valueCreatedForUser"); // Trigger event once URL is set
-  // }, [storedurl, defUrl, defaultUrl, matchingSequence, matchingSequence2, iscanva]);
-  
-
-
-
   useEffect(() => {
-    if (storedurl !== '' && storedurl !== defUrl) {
+    if (storedurl) {
       setUrl(storedurl);
       const loomIdMatch = storedurl?.match(matchingSequence);
 
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
         if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
           const embedId = loomIdMatch[2];
-          setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
-        }
-        else {
+          setEmbedUrl(
+            `https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`
+          );
+        } else {
           const id = loomIdMatch[1] || loomIdMatch[2];
-          setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);
+          setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ""}`);
         }
         setShowWarning(false);
       } else {
-        setShowWarning(true);
-
-        const loomIdMatch = defaultUrl?.match(matchingSequence2);
-        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-
-          setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
-
-        } else {
-          setShowWarning(true);
-          setEmbedUrl(defUrl);
-        }
+        // setShowWarning(true);
+        setEmbedUrl(defUrl);
       }
 
-      monday.execute('valueCreatedForUser');  // Value-created event when URL is successfully set
-
-    }
-    else {
+      monday.execute("valueCreatedForUser"); // Value-created event when URL is successfully set
+    } else {
       setUrl(defaultUrl);
       const loomIdMatch = defaultUrl?.match(matchingSequence2);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-
-        setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+        setEmbedUrl(
+          `https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`
+        );
         setShowWarning(false);
       } else {
         setShowWarning(true);
@@ -228,15 +192,14 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   useEffect(() => {
     if (storedsubmitted) {
       setSubmitted(storedsubmitted);
-      monday.execute('valueCreatedForUser');  // Value-created event when content is submitted
+      monday.execute("valueCreatedForUser"); // Value-created event when content is submitted
     }
-  }
-    , [storedsubmitted]);
+  }, [storedsubmitted]);
 
   useEffect(() => {
     if (storedshowEdit) {
       setShowEdit(storedshowEdit);
-      monday.execute('valueCreatedForUser');  // Value-created event when edit mode is accessed
+      monday.execute("valueCreatedForUser"); // Value-created event when edit mode is accessed
     }
   }, [storedshowEdit]);
 
@@ -248,18 +211,19 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
           if (iscanva && loomIdMatch[2]) {
             const embedId = loomIdMatch[2];
-            setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
-          }
-          else {
+            setEmbedUrl(
+              `https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`
+            );
+          } else {
             const id = loomIdMatch[1] || loomIdMatch[2];
 
-            setEmbedUrl(`${decodePart1}${id}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);
+            setEmbedUrl(`${decodePart1}${id}/edit`) ||
+              setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);
           }
         }
       }
     }
   }, [storedisEditing]);
-
 
   const resetTimeout = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -280,13 +244,13 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     };
 
     // Listen for keypresses and mouse movements to detect activity
-    window.addEventListener('keydown', handleActivity);
-    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener("keydown", handleActivity);
+    window.addEventListener("mousemove", handleActivity);
 
     return () => {
       // Clean up event listeners on unmount
-      window.removeEventListener('keydown', handleActivity);
-      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener("keydown", handleActivity);
+      window.removeEventListener("mousemove", handleActivity);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [show, submitted, showWarning]);
@@ -296,29 +260,29 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     setUrl(inputUrl);
     monday.storage.instance.setItem("url", inputUrl);
     // localStorage.setItem('url', inputUrl) ;
-    // setUrlSetting(false) ; 
+    // setUrlSetting(false) ;
     const loomIdMatch = inputUrl?.match(matchingSequence);
 
     if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-
       if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
         const embedId = loomIdMatch[2];
-        setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
-      }
-      else {
+        setEmbedUrl(
+          `https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`
+        );
+      } else {
         const id = loomIdMatch[1] || loomIdMatch[2];
-        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);
+        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ""}`);
       }
       // setShow(false);
       setShowWarning(false);
       setIsEditing(false);
       setIsValidUrl(true);
     } else {
-
       const loomIdMatch = defaultUrl?.match(matchingSequence2);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-
-        setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+        setEmbedUrl(
+          `https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`
+        );
         setShowWarning(false);
       } else {
         setShowWarning(true);
@@ -327,13 +291,13 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       // setEmbedUrl(defUrl);
       setShowWarning(true);
       // setIsValidUrl(false);
-
     }
     if (inputUrl === "") {
       const loomIdMatch = defaultUrl?.match(matchingSequence2);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-
-        setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+        setEmbedUrl(
+          `https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`
+        );
         setShowWarning(false);
       } else {
         setShowWarning(true);
@@ -345,41 +309,24 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     }
   };
 
-  const DEFAULT_WIDTH = 600;
-  const DEFAULT_HEIGHT = 400;
-
-  const handleWidthChange = (e) => {
-    setWidth(e.target.value); // Allow user to type freely
-    validateWidth(value);
+  const handleWidthChange = (event) => {
+    console.log("Bhai width function call ho raha hai")
+    const value = parseInt(event.target.value, 10);
+    // setWidthSetting(false) ;
+    // setWidth(value > 0 ? value : 600);
+    setWidth(value);
+    // localStorage.setItem('width', value) ;
+    monday.storage.instance.setItem("width", value);
   };
 
-  const handleHeightChange = (e) => {
-    setHeight(e.target.value); // Allow user to type freely
+  const handleHeightChange = (event) => {
+    const value = parseInt(event.target.value, 10);
+    // setHeightSetting(false) ;
+    // setHeight(value > 0 ? value : 400);
+    setHeight(value);
+    // localStorage.setItem('height', value) ;
+    monday.storage.instance.setItem("height", value);
   };
-
-  const validateWidth = () => {
-    if ( /^0\d+$/.test(width)) {
-      
-      alert("Enter a valid positive number. Leading zeros are not allowed.");
-      setShowdimWarning(true);
-      setWidth(DEFAULT_WIDTH);
-    } else {
-      setShowdimWarning(false);
-      setWidth(width ? Number(width) : DEFAULT_WIDTH);
-    }
-  };
-
-  const validateHeight = () => {
-    if ( /^0\d+$/.test(height)) {
-      alert("Enter a valid positive number. Leading zeros are not allowed.");
-      setShowdimWarning(true);
-      setHeight(DEFAULT_HEIGHT);
-    } else {
-      setShowdimWarning(false);
-      setHeight(height ? Number(height) : DEFAULT_HEIGHT); 
-    }
-  };
-
 
   const toggleEditMode = () => {
     const newEditMode = !isEditing;
@@ -399,16 +346,20 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
     }
   };
 
-
   return (
-    <div >
-          {!cookieConsent && (
+    <div>
+      {!cookieConsent && (
         <div className="cookie-overlay">
           <div className="cookie-content">
             <h1>Cookie Consent</h1>
-            <p> We use cookies to enhance your user experience. By using our app,
-              you agree to our use of cookies.{" "}</p>
-            <p><a href={cookiepolicy} >Learn more.</a></p>
+            <p>
+              {" "}
+              We use cookies to enhance your user experience. By using our app,
+              you agree to our use of cookies.{" "}
+            </p>
+            <p>
+              <a href={cookiepolicy}>Learn more.</a>
+            </p>
             <button className="accept-button" onClick={handleAccept}>
               Accept Cookies
             </button>
@@ -416,18 +367,24 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
         </div>
       )}
 
-
-   
-
-      {(<div className="company">
-        <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px", position:"absolute", left:"0px" }} />
-        <div className="name" >
-          <b><span style={{ height: "19px", color: fontCol }}>{appName}</span></b>
-          <span style={{ height: "16px", textAlign: "left", color: fontCol }}> by Satisfaction Drivers</span>
+      {
+        <div className="company">
+          <img
+            src={logo}
+            alt="Company logo"
+            style={{ height: "50px", width: "50px" }}
+          />
+          <div className="name">
+            <b>
+              <span style={{ height: "19px", color: fontCol }}>{appName}</span>
+            </b>
+            <span style={{ height: "16px", textAlign: "left", color: fontCol }}>
+              {" "}
+              by Satisfaction Drivers
+            </span>
+          </div>
         </div>
-      </div>)}
-
-
+      }
 
       {embedUrl && (
         <div
@@ -443,168 +400,199 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
               monday.storage.instance.setItem("showEdit", showEdit);
             }
           }}
-          style={{ position: 'relative', width: 'auto', height: 'auto' }}>
+          style={{ position: "relative", width: "100%", height: "auto" }}
+        >
+          <div style={{ position: "relative", width: "100%", height: "auto" }}>
+    {/* Show Loader when iframe is loading */}
+    {loading && (
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          background: "#fff",
+          padding: "10px",
+          borderRadius: "5px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+        }}
+      >
+        <p style={{ color: "black", fontWeight: "bold" }}>Loading...</p>
+      </div>
+    )}
           <iframe
             ref={iframeRef}
             src={embedUrl}
-            width={
-              /^\d+$/.test(String(width)) && String(width).startsWith("0") && width !== "0"
-                ? 600
-                : Math.max(600, Number(width) || 600)
-            }
-            height={
-              /^\d+$/.test(String(height)) && String(height).startsWith("0") && height !== "0"
-                ? 400
-                : Math.max(400, Number(height) || 400)
-            }
+            width={width > 0 ? width : 600}
+            height={height > 0 ? height : 400}
             frameBorder="0"
             allowFullScreen
             title="Video Player"
-            style={{ marginBottom: "10px", marginRight:"0%" }}
+            style={{ marginBottom: "10px" }}
           ></iframe>
+          </div>
           {submitted && !show && showEdit && (
-            <i class="fa-solid fa-pen-to-square fa-xl" onClick={() => {
-              setShow(true);
-              monday.storage.instance.setItem("show", show);
-            }} style={{
-              width: "40px",
-              height: "40px",
-              position: 'absolute',
-              bottom: '75px',
-              right: '0',
-              zIndex: 10,
-              // marginTop: '20px',
-              paddingTop: '18px',
-              paddingLeft: '5px',
-              zIndex: 10,
-              backgroundColor: '#f1f3f4f2',
-              borderRadius: "40px",
-              color: 'black',
-            }}></i>
+            <i
+              class="fa-solid fa-pen-to-square fa-xl"
+              onClick={() => {
+                setShow(true);
+                monday.storage.instance.setItem("show", show);
+              }}
+              style={{
+                width: "40px",
+                height: "40px",
+                position: "absolute",
+                bottom: "75px",
+                right: "0",
+                zIndex: 10,
+                // marginTop: '20px',
+                paddingTop: "18px",
+                paddingLeft: "5px",
+                zIndex: 10,
+                backgroundColor: "#f1f3f4f2",
+                borderRadius: "40px",
+                color: "black",
+              }}
+            ></i>
           )}
-
         </div>
       )}
 
-      {ifEditing && show && !showWarning && (embedUrl != defUrl) && (<>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={toggleEditMode}
-          style={{
-            // position: 'absolute',
-            // bottom: '18px',
-            // right: '140px',
-            zIndex: 10,
-            padding: '3px 6px',
-            borderRadius: '20px',
-            backgroundColor: isEditing ? '#0d6efd' : '#E5E5EA',
-            color: isEditing ? 'white' : 'black',
-            border: 'none',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
-            fontSize: '16px',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer',
-            outline: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            margin: 'auto'
-          }}
-          onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.95)'}
-          onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          <div
+      {ifEditing && show && !showWarning && embedUrl != defUrl && (
+        <>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={toggleEditMode}
             style={{
-              width: '30px',
-              height: '15px',
-              backgroundColor: isEditing ? 'white' : '#C7C7CC',
-              borderRadius: '15px',
-              position: 'relative',
-              marginRight: '10px',
-              transition: 'background-color 0.3s ease',
+              // position: 'absolute',
+              // bottom: '18px',
+              // right: '140px',
+              zIndex: 10,
+              padding: "3px 6px",
+              borderRadius: "20px",
+              backgroundColor: isEditing ? "#0d6efd" : "#E5E5EA",
+              color: isEditing ? "white" : "black",
+              border: "none",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
+              fontSize: "16px",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+              outline: "none",
+              display: "flex",
+              alignItems: "center",
+              margin: "auto",
             }}
+            onMouseDown={(e) =>
+              (e.currentTarget.style.transform = "scale(0.95)")
+            }
+            onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
           >
             <div
               style={{
-                width: '13px',
-                height: '13px',
-                backgroundColor: isEditing ? '#007AFF' : 'white',
-                borderRadius: '50%',
-                position: 'absolute',
-                top: '1px',
-                left: isEditing ? '15px' : '1px',
-                transition: 'left 0.3s ease',
-                boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
+                width: "30px",
+                height: "15px",
+                backgroundColor: isEditing ? "white" : "#C7C7CC",
+                borderRadius: "15px",
+                position: "relative",
+                marginRight: "10px",
+                transition: "background-color 0.3s ease",
               }}
-            ></div>
-          </div>
-          {isEditing ? "Edit" : "View"}
-        </button>
-        <br /></>
+            >
+              <div
+                style={{
+                  width: "13px",
+                  height: "13px",
+                  backgroundColor: isEditing ? "#007AFF" : "white",
+                  borderRadius: "50%",
+                  position: "absolute",
+                  top: "1px",
+                  left: isEditing ? "15px" : "1px",
+                  transition: "left 0.3s ease",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
+                }}
+              ></div>
+            </div>
+            {isEditing ? "Edit" : "View"}
+          </button>
+          <br />
+        </>
       )}
-      {ifEditing && !submitted && !showWarning && (embedUrl != defUrl) && (<>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={toggleEditMode}
-          style={{
-            // position: 'absolute',
-            // bottom: '18px',
-            // right: '140px',
-            zIndex: 10,
-            padding: '3px 6px',
-            borderRadius: '20px',
-            backgroundColor: isEditing ? '#0d6efd' : '#E5E5EA',
-            color: isEditing ? 'white' : 'black',
-            border: 'none',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
-            fontSize: '16px',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer',
-            outline: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            margin: 'auto'
-          }}
-          onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.95)'}
-          onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          <div
+      {ifEditing && !submitted && !showWarning && embedUrl != defUrl && (
+        <>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={toggleEditMode}
             style={{
-              width: '30px',
-              height: '15px',
-              backgroundColor: isEditing ? 'white' : '#C7C7CC',
-              borderRadius: '15px',
-              position: 'relative',
-              marginRight: '10px',
-              transition: 'background-color 0.3s ease',
+              // position: 'absolute',
+              // bottom: '18px',
+              // right: '140px',
+              zIndex: 10,
+              padding: "3px 6px",
+              borderRadius: "20px",
+              backgroundColor: isEditing ? "#0d6efd" : "#E5E5EA",
+              color: isEditing ? "white" : "black",
+              border: "none",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
+              fontSize: "16px",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+              outline: "none",
+              display: "flex",
+              alignItems: "center",
+              margin: "auto",
             }}
+            onMouseDown={(e) =>
+              (e.currentTarget.style.transform = "scale(0.95)")
+            }
+            onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
           >
             <div
               style={{
-                width: '13px',
-                height: '13px',
-                backgroundColor: isEditing ? '#007AFF' : 'white',
-                borderRadius: '50%',
-                position: 'absolute',
-                top: '1px',
-                left: isEditing ? '15px' : '1px',
-                transition: 'left 0.3s ease',
-                boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
+                width: "30px",
+                height: "15px",
+                backgroundColor: isEditing ? "white" : "#C7C7CC",
+                borderRadius: "15px",
+                position: "relative",
+                marginRight: "10px",
+                transition: "background-color 0.3s ease",
               }}
-            ></div>
-          </div>
-          {isEditing ? "Edit" : "View"}
-        </button>
-        <br /></>
+            >
+              <div
+                style={{
+                  width: "13px",
+                  height: "13px",
+                  backgroundColor: isEditing ? "#007AFF" : "white",
+                  borderRadius: "50%",
+                  position: "absolute",
+                  top: "1px",
+                  left: isEditing ? "15px" : "1px",
+                  transition: "left 0.3s ease",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
+                }}
+              ></div>
+            </div>
+            {isEditing ? "Edit" : "View"}
+          </button>
+          <br />
+        </>
       )}
       {!submitted && (
-        <div style={{ display: "flex", justifyContent: "center", width: "600px", position: "sticky", left: "29%" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "600px",
+            position: "sticky",
+            left: "29%",
+          }}
+        >
           <label style={{ color: fontCol }}>
             {dashUrl} URL:
             <input
               type="text"
-              value={((url === defaultUrl) || (url === defUrl)) ? "" : url}
+              value={url === defaultUrl || url === defUrl ? "" : url}
               onChange={handleUrlChange}
             />
           </label>
@@ -613,28 +601,38 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
             <input
               type="number"
               value={width}
-              onChange={handleWidthChange}  // Allows typing
-              onBlur={validateWidth}        // Validates after user finishes typing
+              onChange={handleWidthChange}
               style={{ marginLeft: "10px" }}
             />
           </label>
-
           <label style={{ color: fontCol }}>
             Height:
             <input
               type="number"
               value={height}
-              onChange={handleHeightChange} // Allows typing
-              onBlur={validateHeight}       // Validates after user finishes typing
+              onChange={handleHeightChange}
               style={{ marginLeft: "10px" }}
             />
           </label>
-
           <button
             type="button"
             className="btn btn-primary"
-            onClick={() => { if (!showWarning && url) { setSubmitted(true); setShow(false); setShowEdit(false); monday.storage.instance.setItem("show", show); monday.storage.instance.setItem("submitted", submitted); monday.storage.instance.setItem("showEdit", showEdit); } }}
-            style={{ height: "42px", marginTop: "36px", marginLeft: "80px", width: "100px" }}
+            onClick={() => {
+              if (!showWarning && url) {
+                setSubmitted(true);
+                setShow(false);
+                setShowEdit(false);
+                monday.storage.instance.setItem("show", show);
+                monday.storage.instance.setItem("submitted", submitted);
+                monday.storage.instance.setItem("showEdit", showEdit);
+              }
+            }}
+            style={{
+              height: "42px",
+              marginTop: "36px",
+              marginLeft: "80px",
+              width: "100px",
+            }}
           >
             Done
           </button>
@@ -642,12 +640,20 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       )}
 
       {show && (
-        <div style={{ display: "flex", justifyContent: "center", width: "600px", position: "sticky", left: "29%" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "600px",
+            position: "sticky",
+            left: "29%",
+          }}
+        >
           <label style={{ color: fontCol }}>
             {dashUrl} URL:
             <input
               type="text"
-              value={((url === defaultUrl) || (url === defUrl)) ? "" : url}
+              value={url === defaultUrl || url === defUrl ? "" : url}
               onChange={handleUrlChange}
               style={{ marginLeft: "10px" }}
             />
@@ -673,8 +679,18 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
           <button
             type="button"
             className="btn btn-primary"
-            onClick={() => { if (!showWarning && url) setShow(false); setShowEdit(false); monday.storage.instance.setItem("show", show); monday.storage.instance.setItem("showEdit", showEdit); }}
-            style={{ height: "42px", marginTop: "36px", marginLeft: "80px", width: "100px" }}
+            onClick={() => {
+              if (!showWarning && url) setShow(false);
+              setShowEdit(false);
+              monday.storage.instance.setItem("show", show);
+              monday.storage.instance.setItem("showEdit", showEdit);
+            }}
+            style={{
+              height: "42px",
+              marginTop: "36px",
+              marginLeft: "80px",
+              width: "100px",
+            }}
           >
             Done
           </button>
@@ -682,34 +698,78 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       )}
 
       {showWarning && (
-        <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
+        <div
+          className="alert alert-danger"
+          role="alert"
+          style={{ margin: "5px", width: "600px" }}
+        >
           Invalid {dashUrl} URL. Please check the link and try again.
         </div>
       )}
 
-{/* {showdimensionWarning && (
-        <div className="alert alert-danger" role="alert" style={{ margin: "5px", width: "600px" }}>
-          Enter a valid positive number. Leading zeros are not allowed.
-        </div>
-      )} */}
-
-      {(<div className="details">
-        <div className="info">
-          <div >
-            <h4 style={{ textAlign: "left", height: "36px" }}>Additional information</h4>
-            <p style={{ height: "60px", marginBottom: "16px", marginTop: "16px", textAlign: "left" }}>Explore additional resources to learn how to set up and utilize app.</p>
-            <button type="button" class="btn btn-primary" style={{ width: "140px", marginTop: "10px" }}><a href={docLink} target='_blank'>Documentation</a></button>
-
+      {
+        <div className="details">
+          <div className="info">
+            <div>
+              <h4 style={{ textAlign: "left", height: "36px" }}>
+                Additional information
+              </h4>
+              <p
+                style={{
+                  height: "60px",
+                  marginBottom: "16px",
+                  marginTop: "16px",
+                  textAlign: "left",
+                }}
+              >
+                Explore additional resources to learn how to set up and utilize
+                app.
+              </p>
+              <button
+                type="button"
+                class="btn btn-primary"
+                style={{ width: "140px", marginTop: "10px" }}
+              >
+                <a href={docLink} target="_blank">
+                  Documentation
+                </a>
+              </button>
+            </div>
+            <div>
+              <h4 style={{ textAlign: "left", height: "36px" }}>
+                Premium support
+              </h4>
+              <p
+                style={{
+                  height: "60px",
+                  marginBottom: "16px",
+                  marginTop: "16px",
+                  textAlign: "left",
+                }}
+              >
+                Our dedicated team is available to assist you with any questions
+                or concerns. Feel free to reach out!
+              </p>
+              <button
+                type="button"
+                class="btn btn-primary"
+                style={{
+                  width: "180px",
+                  marginTop: "10px",
+                  textAlign: "center",
+                }}
+              >
+                <a
+                  href="https://satisfactiondrivers.com/contact-us"
+                  target="_blank"
+                >
+                  Premium Support
+                </a>
+              </button>
+            </div>
           </div>
-          <div>
-            <h4 style={{ textAlign: "left", height: "36px" }}>Premium support</h4>
-            <p style={{ height: "60px", marginBottom: "16px", marginTop: "16px", textAlign: "left" }}>Our dedicated team is available to assist you with any questions or concerns. Feel free to reach out!</p>
-            <button type="button" class="btn btn-primary" style={{ width: "180px", marginTop: "10px", textAlign: "center" }}><a href="https://satisfactiondrivers.com/contact-us" target='_blank'>Premium Support</a></button>
-          </div>
         </div>
-      </div>)}
-
-
+      }
     </div>
   );
 };
