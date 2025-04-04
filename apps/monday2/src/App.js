@@ -79,7 +79,7 @@ const App = () => {
     </div> */}
       <div className="Container" style={{ backgroundColor: bgCol }}>
         {view ? (
-          <ViewPage fontCol={fontCol} bgCol={bgCol} />
+          <ViewPage fontCol={fontCol} bgCol={bgCol} appName={appName} />
         ) : (
           <Player fontCol={fontCol} bgCol={bgCol} />
         )}
