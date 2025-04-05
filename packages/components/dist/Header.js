@@ -9,58 +9,12 @@ require("./Header.css");
 var _CookieConsent = _interopRequireDefault(require("./CookieConsent"));
 var _storageService = require("./storageService");
 var _mondaySdkJs = _interopRequireDefault(require("monday-sdk-js"));
+var _dompurify = _interopRequireDefault(require("dompurify"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
-//defaultUrl
-//matching sequence
-//keepediting
-//app logo
-//app name
-//dash url
-//documentation link
-//const Player = ( {fontCol, bgCol,defaulturl,matchingSequence,ifEditing,logo,appName,dashUrl,docLink} ) => {
-
 const monday = (0, _mondaySdkJs.default)();
 monday.setApiVersion("2023-10");
-
-// // Check if the app is installed and reset cookies if it's a new installation
-// async function checkAppInstallation() {
-//   const installIdKey = "app_install_id";
-//   try {
-//     const storedInstallId = await monday.storage.instance.getItem(installIdKey);
-//     if (!storedInstallId?.data?.value) {
-//       console.log("New installation detected. Resetting cookies...");
-//       await monday.storage.instance.setItem(installIdKey, Date.now().toString());
-//       await monday.storage.instance.deleteItem("cookie_consent");
-//     } else {
-//       console.log("Existing installation. No need to reset cookies.");
-//     }
-//   } catch (error) {
-//     console.error("Error checking app installation:", error);
-//   }
-// }
-
-// // Check if the user has accepted the cookie policy
-// async function checkCookieConsent() {
-//   try {
-//     const response = await monday.storage.instance.getItem("cookie_consent");
-//     return response?.data?.value === "true";
-//   } catch (error) {
-//     console.error("Error fetching cookie consent:", error);
-//     return false;
-//   }
-// }
-
-// // Set cookie consent when the user accepts
-// async function setCookieConsent() {
-//   try {
-//     await monday.storage.instance.setItem("cookie_consent", "true");
-//     console.log("Cookie consent saved.");
-//   } catch (error) {
-//     console.error("Error setting cookie consent:", error);
-//   }
-// }
 const Header = _ref => {
   var _defaultUrl$match;
   let {
@@ -103,6 +57,7 @@ const Header = _ref => {
   const [storedshowEdit, setStoredShowEdit] = (0, _react.useState)("");
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
   const [warningMessage, setWarningMessage] = (0, _react.useState)("");
+  const [loading, setLoading] = (0, _react.useState)(true);
   // const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
   // const [showPopup, setShowPopup] = useState(false);
 
@@ -134,45 +89,48 @@ const Header = _ref => {
   }, [embedUrl]);
   (0, _react.useEffect)(() => {
     monday.storage.instance.getItem('url').then(res => {
-      var _res$data;
-      const value = (_res$data = res.data) === null || _res$data === void 0 ? void 0 : _res$data.value;
+      var _res$data, _value;
+      let value = (_res$data = res.data) === null || _res$data === void 0 ? void 0 : _res$data.value;
       console.log(value);
-      setStoredUrl(value !== null && value !== void 0 ? value : ''); // Provide a default value if undefined
+      value = _dompurify.default.sanitize((_value = value) !== null && _value !== void 0 ? _value : ''); // Sanitize user input
+      setStoredUrl(value);
     });
     monday.storage.instance.getItem('height').then(res => {
-      var _res$data2;
-      const value = (_res$data2 = res.data) === null || _res$data2 === void 0 ? void 0 : _res$data2.value;
-      console.log(value);
-      setStoredHeight(value !== null && value !== void 0 ? value : 0); // Provide a sensible default, e.g., 0 for numbers
+      var _res$data2, _value2;
+      let value = (_res$data2 = res.data) === null || _res$data2 === void 0 ? void 0 : _res$data2.value;
+      value = _dompurify.default.sanitize((_value2 = value) !== null && _value2 !== void 0 ? _value2 : ''); // Sanitize input
+      value = parseInt(value, 10);
+      setStoredHeight(isNaN(value) ? 400 : value); // Ensure valid number
     });
     monday.storage.instance.getItem('width').then(res => {
-      var _res$data3;
-      const value = (_res$data3 = res.data) === null || _res$data3 === void 0 ? void 0 : _res$data3.value;
-      console.log(value);
-      setStoredWidth(value !== null && value !== void 0 ? value : 0);
+      var _res$data3, _value3;
+      let value = (_res$data3 = res.data) === null || _res$data3 === void 0 ? void 0 : _res$data3.value;
+      value = _dompurify.default.sanitize((_value3 = value) !== null && _value3 !== void 0 ? _value3 : ''); // Sanitize input
+      value = parseInt(value, 10);
+      setStoredWidth(isNaN(value) ? 600 : value);
     });
     monday.storage.instance.getItem('show').then(res => {
       var _res$data4;
-      const value = (_res$data4 = res.data) === null || _res$data4 === void 0 ? void 0 : _res$data4.value;
+      let value = (_res$data4 = res.data) === null || _res$data4 === void 0 ? void 0 : _res$data4.value;
       console.log(value);
-      setStoredShow(value !== null && value !== void 0 ? value : false); // Provide default, e.g., false for booleans
+      setStoredShow(value !== null && value !== void 0 ? value : false);
     });
     monday.storage.instance.getItem('submitted').then(res => {
       var _res$data5;
-      const value = (_res$data5 = res.data) === null || _res$data5 === void 0 ? void 0 : _res$data5.value;
+      let value = (_res$data5 = res.data) === null || _res$data5 === void 0 ? void 0 : _res$data5.value;
       console.log(value);
       setStoredSubmitted(value !== null && value !== void 0 ? value : false);
     });
     monday.storage.instance.getItem('showEdit').then(res => {
       var _res$data6;
-      const value = (_res$data6 = res.data) === null || _res$data6 === void 0 ? void 0 : _res$data6.value;
+      let value = (_res$data6 = res.data) === null || _res$data6 === void 0 ? void 0 : _res$data6.value;
       console.log(value);
       setStoredShowEdit(value !== null && value !== void 0 ? value : false);
     });
     if (ifEditing) {
       monday.storage.instance.getItem('isEditing').then(res => {
         var _res$data7;
-        const value = (_res$data7 = res.data) === null || _res$data7 === void 0 ? void 0 : _res$data7.value;
+        let value = (_res$data7 = res.data) === null || _res$data7 === void 0 ? void 0 : _res$data7.value;
         console.log(value);
         setStoredisEditing(value !== null && value !== void 0 ? value : false);
       });
@@ -180,7 +138,7 @@ const Header = _ref => {
     monday.execute('valueCreatedForUser'); // Value-created event when loading saved state
   }, []);
   (0, _react.useEffect)(() => {
-    if (storedurl !== '' && storedurl !== defUrl) {
+    if (storedurl) {
       setUrl(storedurl);
       const loomIdMatch = storedurl === null || storedurl === void 0 ? void 0 : storedurl.match(matchingSequence);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
@@ -193,14 +151,8 @@ const Header = _ref => {
         }
         setShowWarning(false);
       } else {
-        setShowWarning(true);
-        const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
-        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-          setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
-        } else {
-          setShowWarning(true);
-          setEmbedUrl(defUrl);
-        }
+        // setShowWarning(true);
+        setEmbedUrl(defUrl);
       }
       monday.execute('valueCreatedForUser'); // Value-created event when URL is successfully set
     } else {
@@ -270,6 +222,16 @@ const Header = _ref => {
       }
     }, 10000); // 10 second
   };
+  const styles = document.createElement("style");
+  styles.innerHTML = "\n  @keyframes spin {\n    0% { transform: rotate(0deg); }\n    100% { transform: rotate(360deg); }\n  }\n";
+  document.head.appendChild(styles);
+  (0, _react.useEffect)(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer); // Cleanup in case component unmounts
+  }, [embedUrl]);
   (0, _react.useEffect)(() => {
     resetTimeout();
     const handleActivity = () => {
@@ -287,7 +249,7 @@ const Header = _ref => {
     };
   }, [show, submitted, showWarning]);
   const handleUrlChange = event => {
-    const inputUrl = event.target.value;
+    const inputUrl = _dompurify.default.sanitize(event.target.value);
     setUrl(inputUrl);
     monday.storage.instance.setItem("url", inputUrl);
     // localStorage.setItem('url', inputUrl) ;
@@ -336,41 +298,47 @@ const Header = _ref => {
     }
   };
   const handleWidthChange = e => {
-    setWidth(e.target.value);
-    setShowWarning(false); // Hide warning when user starts typing
+    const sanitizedValue = _dompurify.default.sanitize(e.target.value);
+    setWidth(sanitizedValue);
+    setShowWarning(false);
   };
   const handleHeightChange = e => {
-    setHeight(e.target.value);
-    setShowWarning(false); // Hide warning when user starts typing
+    const sanitizedValue = _dompurify.default.sanitize(e.target.value);
+    setHeight(sanitizedValue);
+    setShowWarning(false);
+  };
+  const isValidPositiveInteger = value => {
+    const sanitized = _dompurify.default.sanitize(value);
+    const trimmed = sanitized.trim();
+    // Reject if it's not a number, negative, or has leading zeros (except "0" itself)
+    return /^[1-9]\d*$/.test(trimmed);
   };
   const validateWidth = () => {
-    let num = String(width).trim(); // Ensure it's a string and remove whitespace
-
-    if (/^0\d+$/.test(num) || Number(num) < 0) {
+    const trimmed = String(_dompurify.default.sanitize(width)).trim();
+    if (!isValidPositiveInteger(trimmed)) {
       console.log("Invalid width detected!");
       if (!showWarning) {
         setWarningMessage("Enter a valid positive number. Leading zeros are not allowed.");
         setShowWarning(true);
       }
-      setWidth(DEFAULT_WIDTH.toString()); // Convert to string to force React to update
+      setWidth(DEFAULT_WIDTH.toString());
     } else {
       setShowWarning(false);
-      setWidth(Number(num).toString()); // Convert to number and back to string
+      setWidth(Number(trimmed).toString());
     }
   };
   const validateHeight = () => {
-    let num = String(height).trim(); // Ensure it's a string and remove whitespace
-
-    if (/^0\d+$/.test(num) || Number(num) < 0) {
+    const trimmed = String(_dompurify.default.sanitize(height)).trim();
+    if (!isValidPositiveInteger(trimmed)) {
       console.log("Invalid height detected!");
       if (!showWarning) {
         setWarningMessage("Enter a valid positive number. Leading zeros are not allowed.");
         setShowWarning(true);
       }
-      setHeight(DEFAULT_HEIGHT.toString()); // Convert to string to force React to update
+      setHeight(DEFAULT_HEIGHT.toString());
     } else {
       setShowWarning(false);
-      setHeight(Number(num).toString()); // Convert to number and back to string
+      setHeight(Number(trimmed).toString());
     }
   };
   const toggleEditMode = () => {
@@ -428,10 +396,26 @@ const Header = _ref => {
     },
     style: {
       position: 'relative',
-      width: '100%',
+      width: 'auto',
       height: 'auto'
     }
-  }, /*#__PURE__*/_react.default.createElement("iframe", {
+  }, loading && /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100px'
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      width: '40px',
+      height: '40px',
+      border: '4px solid rgb(255, 255, 255)',
+      borderTop: '4px solid #000',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
+    }
+  })), /*#__PURE__*/_react.default.createElement("iframe", {
     ref: iframeRef,
     src: embedUrl,
     width: /^\d+$/.test(String(width)) && /^0\d+$/.test(String(width)) // Check if it starts with 0 but isn't just "0"

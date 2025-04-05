@@ -3,59 +3,14 @@ import './Header.css';
 import CookieConsent from "./CookieConsent";
 import {resetCookiesOnUninstall } from "./storageService";
 import mondaySdk from "monday-sdk-js";
+import DOMPurify from 'dompurify';
 
-//defaultUrl
-//matching sequence
-//keepediting
-//app logo
-//app name
-//dash url
-//documentation link
-//const Player = ( {fontCol, bgCol,defaulturl,matchingSequence,ifEditing,logo,appName,dashUrl,docLink} ) => {
 
 const monday = mondaySdk();
 monday.setApiVersion("2023-10");
 
-// // Check if the app is installed and reset cookies if it's a new installation
-// async function checkAppInstallation() {
-//   const installIdKey = "app_install_id";
-//   try {
-//     const storedInstallId = await monday.storage.instance.getItem(installIdKey);
-//     if (!storedInstallId?.data?.value) {
-//       console.log("New installation detected. Resetting cookies...");
-//       await monday.storage.instance.setItem(installIdKey, Date.now().toString());
-//       await monday.storage.instance.deleteItem("cookie_consent");
-//     } else {
-//       console.log("Existing installation. No need to reset cookies.");
-//     }
-//   } catch (error) {
-//     console.error("Error checking app installation:", error);
-//   }
-// }
 
-// // Check if the user has accepted the cookie policy
-// async function checkCookieConsent() {
-//   try {
-//     const response = await monday.storage.instance.getItem("cookie_consent");
-//     return response?.data?.value === "true";
-//   } catch (error) {
-//     console.error("Error fetching cookie consent:", error);
-//     return false;
-//   }
-// }
-
-// // Set cookie consent when the user accepts
-// async function setCookieConsent() {
-//   try {
-//     await monday.storage.instance.setItem("cookie_consent", "true");
-//     console.log("Cookie consent saved.");
-//   } catch (error) {
-//     console.error("Error setting cookie consent:", error);
-//   }
-// }
 const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo, appName, dashUrl, docLink, decodePart1, decodePart2, cookiepolicy }) => {
-
-
 
   const matchingSequence2 = /(?:loom\.com\/share\/|loom\.com\/embed\/)([a-zA-Z0-9]+)/;
 
@@ -85,6 +40,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedshowEdit, setStoredShowEdit] = useState("");
   const [storedisEditing, setStoredisEditing] = useState(false);
   const [warningMessage, setWarningMessage] = useState("");
+  const [loading, setLoading] = useState(true);
   // const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
   // const [showPopup, setShowPopup] = useState(false);
   
@@ -106,196 +62,206 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   //   await setCookieConsent();
   //   setShowPopup(false);
   // };
-
+   
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
   }
 
-
   useEffect(() => {
     setShowWarning(false);
-  }, [embedUrl]);
-  useEffect(() => {
+}, [embedUrl]);
+
+useEffect(() => {
     monday.storage.instance.getItem('url').then(res => {
-      const value = res.data?.value;
-      console.log(value);
-      setStoredUrl(value ?? ''); // Provide a default value if undefined
+        let value = res.data?.value;
+        console.log(value);
+        value = DOMPurify.sanitize(value ?? ''); // Sanitize user input
+        setStoredUrl(value);
     });
 
     monday.storage.instance.getItem('height').then(res => {
-      const value = res.data?.value;
-      console.log(value);
-      setStoredHeight(value ?? 0); // Provide a sensible default, e.g., 0 for numbers
-    });
+      let value = res.data?.value;
+      value = DOMPurify.sanitize(value ?? ''); // Sanitize input
+      value = parseInt(value, 10);
+      setStoredHeight(isNaN(value) ? 400 : value); // Ensure valid number
+  });
 
-    monday.storage.instance.getItem('width').then(res => {
-      const value = res.data?.value;
-      console.log(value);
-      setStoredWidth(value ?? 0);
-    });
+  monday.storage.instance.getItem('width').then(res => {
+    let value = res.data?.value;
+    value = DOMPurify.sanitize(value ?? ''); // Sanitize input
+    value = parseInt(value, 10);
+    setStoredWidth(isNaN(value) ? 600 : value);
+});
 
     monday.storage.instance.getItem('show').then(res => {
-      const value = res.data?.value;
-      console.log(value);
-      setStoredShow(value ?? false); // Provide default, e.g., false for booleans
+        let value = res.data?.value;
+        console.log(value);
+        setStoredShow(value ?? false);
     });
 
-
     monday.storage.instance.getItem('submitted').then(res => {
-      const value = res.data?.value;
-      console.log(value);
-      setStoredSubmitted(value ?? false);
+        let value = res.data?.value;
+        console.log(value);
+        setStoredSubmitted(value ?? false);
     });
 
     monday.storage.instance.getItem('showEdit').then(res => {
-      const value = res.data?.value;
-      console.log(value);
-      setStoredShowEdit(value ?? false);
-    });
-    if (ifEditing) {
-      monday.storage.instance.getItem('isEditing').then(res => {
-        const value = res.data?.value;
+        let value = res.data?.value;
         console.log(value);
-        setStoredisEditing(value ?? false);
-      });
+        setStoredShowEdit(value ?? false);
+    });
+
+    if (ifEditing) {
+        monday.storage.instance.getItem('isEditing').then(res => {
+            let value = res.data?.value;
+            console.log(value);
+            setStoredisEditing(value ?? false);
+        });
     }
+
     monday.execute('valueCreatedForUser');  // Value-created event when loading saved state
-  }, []);
+}, []);
 
 
 
-  useEffect(() => {
-    if (storedurl !== '' && storedurl !== defUrl) {
-      setUrl(storedurl);
-      const loomIdMatch = storedurl?.match(matchingSequence);
+useEffect(() => {
+  if (storedurl) {
+    setUrl(storedurl);
+    const loomIdMatch = storedurl?.match(matchingSequence);
 
-      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-        if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
+    if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+      if( iscanva && loomIdMatch[2] && loomIdMatch[1]){
+        const embedId = loomIdMatch[2];
+        setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
+      }
+      else{
+        const id = loomIdMatch[1] || loomIdMatch[2];  
+      setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);}
+      setShowWarning(false);
+    } else {
+      // setShowWarning(true);
+      setEmbedUrl(defUrl);
+    }
+
+    monday.execute('valueCreatedForUser');  // Value-created event when URL is successfully set
+
+  }
+  else {
+    setUrl(defaultUrl);
+    const loomIdMatch = defaultUrl?.match(matchingSequence2);
+    if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+      
+      setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+      setShowWarning(false);
+    } else {
+      setShowWarning(true);
+      setEmbedUrl(defUrl);
+    }
+  }
+}, [storedurl]);
+
+useEffect(() => {
+  if (storedheight) {
+    setHeight(parseInt(storedheight, 10));
+  }
+}, [storedheight]);
+
+useEffect(() => {
+  if (storedwidth) {
+    setWidth(parseInt(storedwidth, 10));
+  }
+}, [storedwidth]);
+
+useEffect(() => {
+  if (storedshow) {
+    setShow(storedshow);
+  }
+}, [storedshow]);
+
+useEffect(() => {
+  if (storedsubmitted) {
+    setSubmitted(storedsubmitted);
+    monday.execute('valueCreatedForUser');  // Value-created event when content is submitted
+  }
+}
+  , [storedsubmitted]);
+
+useEffect(() => {
+  if (storedshowEdit) {
+    setShowEdit(storedshowEdit); 
+    monday.execute('valueCreatedForUser');  // Value-created event when edit mode is accessed
+  }
+}, [storedshowEdit]);
+
+useEffect(() => {
+  if (storedisEditing) {
+    setIsEditing(storedisEditing);
+    if (storedisEditing) {
+      const loomIdMatch = url?.match(matchingSequence);
+      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+        if( iscanva && loomIdMatch[2]){
           const embedId = loomIdMatch[2];
           setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
         }
-        else {
-          const id = loomIdMatch[1] || loomIdMatch[2];
-          setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);
-        }
-        setShowWarning(false);
-      } else {
-        setShowWarning(true);
-
-        const loomIdMatch = defaultUrl?.match(matchingSequence2);
-        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-
-          setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
-
-        } else {
-          setShowWarning(true);
-          setEmbedUrl(defUrl);
-        }
+        else{
+          const id = loomIdMatch[1] || loomIdMatch[2];  
+      
+        setEmbedUrl(`${decodePart1}${id}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);}
       }
-
-      monday.execute('valueCreatedForUser');  // Value-created event when URL is successfully set
-
-    }
-    else {
-      setUrl(defaultUrl);
-      const loomIdMatch = defaultUrl?.match(matchingSequence2);
-      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-
-        setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
-        setShowWarning(false);
-      } else {
-        setShowWarning(true);
-        setEmbedUrl(defUrl);
-      }
-    }
-  }, [storedurl]);
-
-  useEffect(() => {
-    if (storedheight) {
-      setHeight(parseInt(storedheight, 10));
-    }
-  }, [storedheight]);
-
-  useEffect(() => {
-    if (storedwidth) {
-      setWidth(parseInt(storedwidth, 10));
-    }
-  }, [storedwidth]);
-
-  useEffect(() => {
-    if (storedshow) {
-      setShow(storedshow);
-    }
-  }, [storedshow]);
-
-  useEffect(() => {
-    if (storedsubmitted) {
-      setSubmitted(storedsubmitted);
-      monday.execute('valueCreatedForUser');  // Value-created event when content is submitted
     }
   }
-    , [storedsubmitted]);
+}, [storedisEditing]);
 
-  useEffect(() => {
-    if (storedshowEdit) {
-      setShowEdit(storedshowEdit);
-      monday.execute('valueCreatedForUser');  // Value-created event when edit mode is accessed
+
+const resetTimeout = () => {
+  if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  timeoutRef.current = setTimeout(() => {
+    if (!showWarning && url) {
+      setShow(false);
+      monday.storage.instance.setItem("show", show);
+      setSubmitted(true);
+      monday.storage.instance.setItem("submitted", submitted);
     }
-  }, [storedshowEdit]);
-
+  }, 10000); // 10 second
+};
+const styles = document.createElement("style");
+styles.innerHTML = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+document.head.appendChild(styles);
   useEffect(() => {
-    if (storedisEditing) {
-      setIsEditing(storedisEditing);
-      if (storedisEditing) {
-        const loomIdMatch = url?.match(matchingSequence);
-        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
-          if (iscanva && loomIdMatch[2]) {
-            const embedId = loomIdMatch[2];
-            setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
-          }
-          else {
-            const id = loomIdMatch[1] || loomIdMatch[2];
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  
+    return () => clearTimeout(timer); // Cleanup in case component unmounts
+  }, [embedUrl]);
 
-            setEmbedUrl(`${decodePart1}${id}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);
-          }
-        }
-      }
-    }
-  }, [storedisEditing]);
-
-
-  const resetTimeout = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      if (!showWarning && url) {
-        setShow(false);
-        monday.storage.instance.setItem("show", show);
-        setSubmitted(true);
-        monday.storage.instance.setItem("submitted", submitted);
-      }
-    }, 10000); // 10 second
+useEffect(() => {
+  resetTimeout();
+  const handleActivity = () => {
+    resetTimeout();
   };
 
-  useEffect(() => {
-    resetTimeout();
-    const handleActivity = () => {
-      resetTimeout();
-    };
+  // Listen for keypresses and mouse movements to detect activity
+  window.addEventListener('keydown', handleActivity);
+  window.addEventListener('mousemove', handleActivity);
 
-    // Listen for keypresses and mouse movements to detect activity
-    window.addEventListener('keydown', handleActivity);
-    window.addEventListener('mousemove', handleActivity);
+  return () => {
+    // Clean up event listeners on unmount
+    window.removeEventListener('keydown', handleActivity);
+    window.removeEventListener('mousemove', handleActivity);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
+}, [show, submitted, showWarning]);
 
-    return () => {
-      // Clean up event listeners on unmount
-      window.removeEventListener('keydown', handleActivity);
-      window.removeEventListener('mousemove', handleActivity);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [show, submitted, showWarning]);
-  const handleUrlChange = (event) => {
-    const inputUrl = event.target.value;
+const handleUrlChange = (event) => {
+  const inputUrl = DOMPurify.sanitize(event.target.value);
     setUrl(inputUrl);
     monday.storage.instance.setItem("url", inputUrl);
     // localStorage.setItem('url', inputUrl) ;
@@ -352,45 +318,55 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   };
 
   const handleWidthChange = (e) => {
-    setWidth(e.target.value);
-    setShowWarning(false); // Hide warning when user starts typing
+    const sanitizedValue = DOMPurify.sanitize(e.target.value);
+    setWidth(sanitizedValue);
+    setShowWarning(false);
   };
-
+  
   const handleHeightChange = (e) => {
-    setHeight(e.target.value);
-    setShowWarning(false); // Hide warning when user starts typing
-  };const validateWidth = () => {
-    let num = String(width).trim(); // Ensure it's a string and remove whitespace
-    
-    if (/^0\d+$/.test(num) || Number(num) < 0) {
+    const sanitizedValue = DOMPurify.sanitize(e.target.value);
+    setHeight(sanitizedValue);
+    setShowWarning(false);
+  };
+  
+  const isValidPositiveInteger = (value) => {
+    const sanitized = DOMPurify.sanitize(value);
+    const trimmed = sanitized.trim();
+    // Reject if it's not a number, negative, or has leading zeros (except "0" itself)
+    return /^[1-9]\d*$/.test(trimmed);
+  };
+  
+  const validateWidth = () => {
+    const trimmed = String(DOMPurify.sanitize(width)).trim();
+  
+    if (!isValidPositiveInteger(trimmed)) {
       console.log("Invalid width detected!");
-      if (!showWarning) { 
+      if (!showWarning) {
         setWarningMessage("Enter a valid positive number. Leading zeros are not allowed.");
         setShowWarning(true);
       }
-      setWidth(DEFAULT_WIDTH.toString()); // Convert to string to force React to update
+      setWidth(DEFAULT_WIDTH.toString());
     } else {
       setShowWarning(false);
-      setWidth(Number(num).toString()); // Convert to number and back to string
+      setWidth(Number(trimmed).toString());
     }
   };
   
   const validateHeight = () => {
-    let num = String(height).trim(); // Ensure it's a string and remove whitespace
-    
-    if (/^0\d+$/.test(num) || Number(num) < 0) {
+    const trimmed = String(DOMPurify.sanitize(height)).trim();
+  
+    if (!isValidPositiveInteger(trimmed)) {
       console.log("Invalid height detected!");
-      if (!showWarning) { 
+      if (!showWarning) {
         setWarningMessage("Enter a valid positive number. Leading zeros are not allowed.");
         setShowWarning(true);
       }
-      setHeight(DEFAULT_HEIGHT.toString()); // Convert to string to force React to update
+      setHeight(DEFAULT_HEIGHT.toString());
     } else {
       setShowWarning(false);
-      setHeight(Number(num).toString()); // Convert to number and back to string
+      setHeight(Number(trimmed).toString());
     }
   };
-  
   
 
 
@@ -442,7 +418,28 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
               monday.storage.instance.setItem("showEdit", showEdit);
             }
           }}
-          style={{ position: 'relative', width: '100%', height: 'auto' }}>
+          style={{ position: 'relative', width: 'auto', height: 'auto' }}>
+          {loading && (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100px',
+        }}
+      >
+        <div
+          style={{
+            width: '40px',
+            height: '40px',
+            border: '4px solid rgb(255, 255, 255)',
+            borderTop: '4px solid #000',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+          }}
+        />
+      </div>
+      )}
           <iframe
             ref={iframeRef}
             src={embedUrl}
