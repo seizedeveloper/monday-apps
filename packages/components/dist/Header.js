@@ -344,30 +344,33 @@ const Header = _ref => {
     setShowWarning(false); // Hide warning when user starts typing
   };
   const validateWidth = () => {
-    if (/^0\d+$/.test(width)) {
+    let num = String(width).trim(); // Ensure it's a string and remove whitespace
+
+    if (/^0\d+$/.test(num) || Number(num) < 0) {
       console.log("Invalid width detected!");
       if (!showWarning) {
-        // Prevent duplicate warnings
-        setWarningMessage("Width cannot have leading zeros.");
+        setWarningMessage("Enter a valid positive number. Leading zeros are not allowed.");
         setShowWarning(true);
       }
-      setWidth(DEFAULT_WIDTH);
+      setWidth(DEFAULT_WIDTH.toString()); // Convert to string to force React to update
     } else {
       setShowWarning(false);
-      setWidth(width ? Number(width) : DEFAULT_WIDTH);
+      setWidth(Number(num).toString()); // Convert to number and back to string
     }
   };
   const validateHeight = () => {
-    if (/^0\d+$/.test(height)) {
+    let num = String(height).trim(); // Ensure it's a string and remove whitespace
+
+    if (/^0\d+$/.test(num) || Number(num) < 0) {
+      console.log("Invalid height detected!");
       if (!showWarning) {
-        // Prevent setting the warning multiple times
-        setWarningMessage("Height cannot have leading zeros.");
+        setWarningMessage("Enter a valid positive number. Leading zeros are not allowed.");
         setShowWarning(true);
       }
-      setHeight(DEFAULT_HEIGHT);
+      setHeight(DEFAULT_HEIGHT.toString()); // Convert to string to force React to update
     } else {
       setShowWarning(false);
-      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
+      setHeight(Number(num).toString()); // Convert to number and back to string
     }
   };
   const toggleEditMode = () => {
@@ -386,7 +389,9 @@ const Header = _ref => {
       }
     }
   };
-  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_CookieConsent.default, null), /*#__PURE__*/_react.default.createElement("div", {
+  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_CookieConsent.default, {
+    cookiepolicy: cookiepolicy
+  }), /*#__PURE__*/_react.default.createElement("div", {
     className: "company"
   }, /*#__PURE__*/_react.default.createElement("img", {
     src: logo,
@@ -429,8 +434,9 @@ const Header = _ref => {
   }, /*#__PURE__*/_react.default.createElement("iframe", {
     ref: iframeRef,
     src: embedUrl,
-    width: /^\d+$/.test(String(width)) && String(width).startsWith("0") && width !== "0" ? 600 : Math.max(600, Number(width) || 600),
-    height: /^\d+$/.test(String(height)) && String(height).startsWith("0") && height !== "0" ? 400 : Math.max(400, Number(height) || 400),
+    width: /^\d+$/.test(String(width)) && /^0\d+$/.test(String(width)) // Check if it starts with 0 but isn't just "0"
+    ? 600 : Math.max(600, Number(width) || 600),
+    height: /^\d+$/.test(String(height)) && /^0\d+$/.test(String(height)) ? 400 : Math.max(400, Number(height) || 400),
     frameBorder: "0",
     allowFullScreen: true,
     title: "Video Player",

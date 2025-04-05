@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 
-const CookieConsent = () => {
+const CookieConsent = ( {cookiepolicy} ) => {
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
@@ -25,11 +25,17 @@ const CookieConsent = () => {
   return (
     <>
       {showPopup && (
-        <div className="cookie-popup">
-          <p>We use cookies to improve your experience.</p>
-          <button onClick={acceptCookies}>Accept</button>
-        </div>
-      )}
+  <div className="cookie-overlay">
+    <div className="cookie-content">
+    <h1>Cookie Consent</h1>
+            <p> We use cookies to enhance your user experience. By using our app,
+              you agree to our use of cookies.{" "}</p>
+            <p><a href={cookiepolicy} >Learn more.</a></p>
+      <button className="accept-button" onClick={acceptCookies}>Accept Cookies</button>
+    </div>
+  </div>
+)}
+
     </>
   );
 };

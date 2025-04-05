@@ -7,7 +7,10 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
-const CookieConsent = () => {
+const CookieConsent = _ref => {
+  let {
+    cookiepolicy
+  } = _ref;
   const [showPopup, setShowPopup] = (0, _react.useState)(false);
   (0, _react.useEffect)(() => {
     // Debugging logs
@@ -25,9 +28,14 @@ const CookieConsent = () => {
     setShowPopup(false);
   };
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, showPopup && /*#__PURE__*/_react.default.createElement("div", {
-    className: "cookie-popup"
-  }, /*#__PURE__*/_react.default.createElement("p", null, "We use cookies to improve your experience."), /*#__PURE__*/_react.default.createElement("button", {
+    className: "cookie-overlay"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "cookie-content"
+  }, /*#__PURE__*/_react.default.createElement("h1", null, "Cookie Consent"), /*#__PURE__*/_react.default.createElement("p", null, " We use cookies to enhance your user experience. By using our app, you agree to our use of cookies.", " "), /*#__PURE__*/_react.default.createElement("p", null, /*#__PURE__*/_react.default.createElement("a", {
+    href: cookiepolicy
+  }, "Learn more.")), /*#__PURE__*/_react.default.createElement("button", {
+    className: "accept-button",
     onClick: acceptCookies
-  }, "Accept")));
+  }, "Accept Cookies"))));
 };
 var _default = exports.default = CookieConsent;

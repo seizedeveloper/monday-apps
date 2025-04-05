@@ -56,7 +56,7 @@ const App = () => {
 
 
 
-  // var isViewOnly = false;
+  // var isViewOnly = true;
   var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
   var matchingSequence = /(?:calendar\.google\.com\/calendar\/(?:u\/\d+\/)?embed\?src=)([^&]+)/;
   var ifEditing = false;

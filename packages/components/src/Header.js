@@ -359,34 +359,39 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const handleHeightChange = (e) => {
     setHeight(e.target.value);
     setShowWarning(false); // Hide warning when user starts typing
-  };
-
-  const validateWidth = () => {
-    if (/^0\d+$/.test(width)) {
+  };const validateWidth = () => {
+    let num = String(width).trim(); // Ensure it's a string and remove whitespace
+    
+    if (/^0\d+$/.test(num) || Number(num) < 0) {
       console.log("Invalid width detected!");
-      if (!showWarning) { // Prevent duplicate warnings
-        setWarningMessage("Width cannot have leading zeros.");
+      if (!showWarning) { 
+        setWarningMessage("Enter a valid positive number. Leading zeros are not allowed.");
         setShowWarning(true);
       }
-      setWidth(DEFAULT_WIDTH);
+      setWidth(DEFAULT_WIDTH.toString()); // Convert to string to force React to update
     } else {
       setShowWarning(false);
-      setWidth(width ? Number(width) : DEFAULT_WIDTH);
+      setWidth(Number(num).toString()); // Convert to number and back to string
     }
   };
-
+  
   const validateHeight = () => {
-    if (/^0\d+$/.test(height)) {
-      if (!showWarning) { // Prevent setting the warning multiple times
-        setWarningMessage("Height cannot have leading zeros.");
+    let num = String(height).trim(); // Ensure it's a string and remove whitespace
+    
+    if (/^0\d+$/.test(num) || Number(num) < 0) {
+      console.log("Invalid height detected!");
+      if (!showWarning) { 
+        setWarningMessage("Enter a valid positive number. Leading zeros are not allowed.");
         setShowWarning(true);
       }
-      setHeight(DEFAULT_HEIGHT);
+      setHeight(DEFAULT_HEIGHT.toString()); // Convert to string to force React to update
     } else {
       setShowWarning(false);
-      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
+      setHeight(Number(num).toString()); // Convert to number and back to string
     }
   };
+  
+  
 
 
   const toggleEditMode = () => {
@@ -411,7 +416,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   return (
     <div >
    
-   <CookieConsent />
+   <CookieConsent cookiepolicy={cookiepolicy} />
 
       {(<div className="company">
         <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px" }} />
@@ -442,15 +447,16 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
             ref={iframeRef}
             src={embedUrl}
             width={
-              /^\d+$/.test(String(width)) && String(width).startsWith("0") && width !== "0"
+              /^\d+$/.test(String(width)) && /^0\d+$/.test(String(width))  // Check if it starts with 0 but isn't just "0"
                 ? 600
                 : Math.max(600, Number(width) || 600)
             }
             height={
-              /^\d+$/.test(String(height)) && String(height).startsWith("0") && height !== "0"
+              /^\d+$/.test(String(height)) && /^0\d+$/.test(String(height)) 
                 ? 400
                 : Math.max(400, Number(height) || 400)
             }
+            
             frameBorder="0"
             allowFullScreen
             title="Video Player"
