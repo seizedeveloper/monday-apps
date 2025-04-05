@@ -365,17 +365,15 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const DEFAULT_HEIGHT = 400;
 
   const handleWidthChange = (e) => {
-    setWidth(e.target.value); // Allow user to type freely
-    validateWidth(value);
+    setWidth(e.target.value); // Let user type freely
   };
-
+  
   const handleHeightChange = (e) => {
-    setHeight(e.target.value); // Allow user to type freely
+    setHeight(e.target.value); // Let user type freely
   };
-
+  
   const validateWidth = () => {
-    if ( /^0\d+$/.test(width)) {
-      
+    if (/^0\d+$/.test(width)) {
       alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
       setWidth(DEFAULT_WIDTH);
@@ -384,15 +382,15 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       setWidth(width ? Number(width) : DEFAULT_WIDTH);
     }
   };
-
+  
   const validateHeight = () => {
-    if ( /^0\d+$/.test(height)) {
+    if (/^0\d+$/.test(height)) {
       alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
       setHeight(DEFAULT_HEIGHT);
     } else {
       setShowdimWarning(false);
-      setHeight(height ? Number(height) : DEFAULT_HEIGHT); 
+      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
     }
   };
 
