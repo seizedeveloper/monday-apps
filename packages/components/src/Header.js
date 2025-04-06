@@ -114,7 +114,7 @@ useEffect(() => {
 
     if (ifEditing) {
         monday.storage.instance.getItem('isEditing').then(res => {
-            let value = res.data?.value;
+            const value = res.data?.value;
             console.log(value);
             setStoredisEditing(value ?? false);
         });
@@ -126,22 +126,32 @@ useEffect(() => {
 
 
 useEffect(() => {
-  if (storedurl) {
+  if (storedurl !== '' && storedurl !== defUrl) {
     setUrl(storedurl);
     const loomIdMatch = storedurl?.match(matchingSequence);
 
-    if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
-      if( iscanva && loomIdMatch[2] && loomIdMatch[1]){
+    if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+      if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
         const embedId = loomIdMatch[2];
         setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
       }
-      else{
-        const id = loomIdMatch[1] || loomIdMatch[2];  
-      setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);}
+      else {
+        const id = loomIdMatch[1] || loomIdMatch[2];
+        setEmbedUrl(`${decodePart1}${id}${decodePart2 ?? ''}`);
+      }
       setShowWarning(false);
     } else {
-      // setShowWarning(true);
-      setEmbedUrl(defUrl);
+      setShowWarning(true);
+         
+         const loomIdMatch = defaultUrl?.match(matchingSequence2);
+         if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+ 
+           setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
+           
+         } else {
+           setShowWarning(true);
+           setEmbedUrl(defUrl);
+         }
     }
 
     monday.execute('valueCreatedForUser');  // Value-created event when URL is successfully set
@@ -150,7 +160,7 @@ useEffect(() => {
   else {
     setUrl(defaultUrl);
     const loomIdMatch = defaultUrl?.match(matchingSequence2);
-    if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
+    if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
       
       setEmbedUrl(`https://www.loom.com/embed/${loomIdMatch[1]}?autoplay=false`);
       setShowWarning(false);
@@ -199,15 +209,15 @@ useEffect(() => {
     setIsEditing(storedisEditing);
     if (storedisEditing) {
       const loomIdMatch = url?.match(matchingSequence);
-      if (loomIdMatch && (loomIdMatch[1]|| loomIdMatch[2])) {
-        if( iscanva && loomIdMatch[2]){
+      if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+        if (iscanva && loomIdMatch[2]) {
           const embedId = loomIdMatch[2];
           setEmbedUrl(`https://www.canva.com/design/${loomIdMatch[1]}/${embedId}/view?embed`);
-        }
-        else{
-          const id = loomIdMatch[1] || loomIdMatch[2];  
-      
-        setEmbedUrl(`${decodePart1}${id}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);}
+        }else {
+             const id = loomIdMatch[1] || loomIdMatch[2];
+ 
+             setEmbedUrl(`${decodePart1}${id}/edit`) || setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`);
+           }
       }
     }
   }

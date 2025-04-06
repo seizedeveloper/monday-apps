@@ -130,7 +130,7 @@ const Header = _ref => {
     if (ifEditing) {
       monday.storage.instance.getItem('isEditing').then(res => {
         var _res$data7;
-        let value = (_res$data7 = res.data) === null || _res$data7 === void 0 ? void 0 : _res$data7.value;
+        const value = (_res$data7 = res.data) === null || _res$data7 === void 0 ? void 0 : _res$data7.value;
         console.log(value);
         setStoredisEditing(value !== null && value !== void 0 ? value : false);
       });
@@ -138,7 +138,7 @@ const Header = _ref => {
     monday.execute('valueCreatedForUser'); // Value-created event when loading saved state
   }, []);
   (0, _react.useEffect)(() => {
-    if (storedurl) {
+    if (storedurl !== '' && storedurl !== defUrl) {
       setUrl(storedurl);
       const loomIdMatch = storedurl === null || storedurl === void 0 ? void 0 : storedurl.match(matchingSequence);
       if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
@@ -151,8 +151,14 @@ const Header = _ref => {
         }
         setShowWarning(false);
       } else {
-        // setShowWarning(true);
-        setEmbedUrl(defUrl);
+        setShowWarning(true);
+        const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
+        if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
+          setEmbedUrl("https://www.loom.com/embed/".concat(loomIdMatch[1], "?autoplay=false"));
+        } else {
+          setShowWarning(true);
+          setEmbedUrl(defUrl);
+        }
       }
       monday.execute('valueCreatedForUser'); // Value-created event when URL is successfully set
     } else {
