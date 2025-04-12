@@ -378,7 +378,6 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const validateWidth = () => {
     if ( /^0\d+$/.test(width) || Number(width)<0) {
       
-      //alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
       setShowWarning2(true);
       setWidth(DEFAULT_WIDTH);
@@ -391,7 +390,6 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   const validateHeight = () => {
     if ( /^0\d+$/.test(height)|| Number(height)<0) {
-      //alert("Enter a valid positive number. Leading zeros are not allowed.");
       setShowdimWarning(true);
       setShowWarning2(true);
       setHeight(DEFAULT_HEIGHT);
@@ -444,7 +442,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
       {(<div className="company">
         <img src={logo} alt="Company logo" style={{ height: "50px", width: "50px", position:"absolute", left:"0px" }} />
         <div className="name" >
-          <b><span style={{ height: "19px", color: fontCol }}>{appName}</span></b>
+          <b><span style={{ whiteSpace: "nowrap", height: "19px", color: fontCol }}>{appName}</span></b>
           <span style={{ height: "16px", textAlign: "left", color: fontCol }}> by Satisfaction Drivers</span>
         </div>
       </div>)}

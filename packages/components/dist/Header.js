@@ -46,6 +46,7 @@ const Header = _ref => {
   const [height, setHeight] = (0, _react.useState)(400);
   const [embedUrl, setEmbedUrl] = (0, _react.useState)(defUrl);
   const [showWarning, setShowWarning] = (0, _react.useState)(false);
+  const [showWarning2, setShowWarning2] = (0, _react.useState)(false);
   const [showdimensionWarning, setShowdimWarning] = (0, _react.useState)(false);
   const [submitted, setSubmitted] = (0, _react.useState)(false);
   const [show, setShow] = (0, _react.useState)(false);
@@ -338,29 +339,30 @@ const Header = _ref => {
   const DEFAULT_HEIGHT = 400;
   const handleWidthChange = e => {
     setWidth(e.target.value); // Allow user to type freely
-    validateWidth(value);
   };
   const handleHeightChange = e => {
     setHeight(e.target.value); // Allow user to type freely
   };
   const validateWidth = () => {
-    if (/^0\d+$/.test(width)) {
-      alert("Enter a valid positive number. Leading zeros are not allowed.");
+    if (/^0\d+$/.test(width) || Number(width) < 0) {
       setShowdimWarning(true);
+      setShowWarning2(true);
       setWidth(DEFAULT_WIDTH);
     } else {
       setShowdimWarning(false);
-      setWidth(width ? Number(width) : DEFAULT_WIDTH);
+      setShowWarning2(false);
+      setWidth(width ? Math.max(Number(width), 600) : DEFAULT_WIDTH);
     }
   };
   const validateHeight = () => {
-    if (/^0\d+$/.test(height)) {
-      alert("Enter a valid positive number. Leading zeros are not allowed.");
+    if (/^0\d+$/.test(height) || Number(height) < 0) {
       setShowdimWarning(true);
+      setShowWarning2(true);
       setHeight(DEFAULT_HEIGHT);
     } else {
       setShowdimWarning(false);
-      setHeight(height ? Number(height) : DEFAULT_HEIGHT);
+      setShowWarning2(false);
+      setHeight(height ? Math.max(Number(height), 400) : DEFAULT_HEIGHT);
     }
   };
   const toggleEditMode = () => {
@@ -403,6 +405,7 @@ const Header = _ref => {
     className: "name"
   }, /*#__PURE__*/_react.default.createElement("b", null, /*#__PURE__*/_react.default.createElement("span", {
     style: {
+      whiteSpace: "nowrap",
       height: "19px",
       color: fontCol
     }
@@ -663,6 +666,7 @@ const Header = _ref => {
     type: "number",
     value: width,
     onChange: handleWidthChange,
+    onBlur: validateWidth,
     style: {
       marginLeft: "10px"
     }
@@ -674,6 +678,7 @@ const Header = _ref => {
     type: "number",
     value: height,
     onChange: handleHeightChange,
+    onBlur: validateHeight,
     style: {
       marginLeft: "10px"
     }
@@ -699,7 +704,14 @@ const Header = _ref => {
       margin: "5px",
       width: "600px"
     }
-  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), /*#__PURE__*/_react.default.createElement("div", {
+  }, "Invalid ", dashUrl, " URL. Please check the link and try again."), showWarning2 && /*#__PURE__*/_react.default.createElement("div", {
+    className: "alert alert-danger",
+    role: "alert",
+    style: {
+      margin: "5px",
+      width: "600px"
+    }
+  }, "Enter a valid positive number. Leading zeros are not allowed."), /*#__PURE__*/_react.default.createElement("div", {
     className: "details"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info"
