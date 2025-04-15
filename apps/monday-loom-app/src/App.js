@@ -92,7 +92,7 @@ const App = () => {
     </div> */}
       <div className="Container" style={{ backgroundColor: bgCol }}>
         {view ? (
-          <ViewPage fontCol={fontCol} bgCol={bgCol} />
+          <ViewPage fontCol={fontCol} bgCol={bgCol} appName={appName}/>
         ) : (
          <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
                     ifEditing={ifEditing} logo={logo} appName={appName} 
