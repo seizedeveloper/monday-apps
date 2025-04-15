@@ -57,9 +57,9 @@ const App = () => {
 
 
   // var isViewOnly = false;
-  var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
+  var defaulturl = 'https://www.loom.com/share/cb0ba219cfa14dd5aef644f17fffaef4?sid=cd19978f-1b68-485f-88c3-19eb31602ef0';
   var matchingSequence = /design\/([a-zA-Z0-9-_]+)\/([a-zA-Z0-9-_]+)/;
-  var ifEditing = true;
+  var ifEditing = false;
 
   var appName = 'Canva Embedder for monday.com';
   var dashUrl = 'Canva';
