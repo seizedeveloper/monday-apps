@@ -62,8 +62,9 @@ const Header = _ref => {
   const [storedsubmitted, setStoredSubmitted] = (0, _react.useState)("");
   const [storedshowEdit, setStoredShowEdit] = (0, _react.useState)("");
   const [storedisEditing, setStoredisEditing] = (0, _react.useState)(false);
-  const [cookieConsent, setCookieConsent] = (0, _react.useState)(null); // Initially null to indicate not yet checked
+  const [cookieConsent, setCookieConsent] = (0, _react.useState)(false); // Initially null to indicate not yet checked
   const [loading, setLoading] = (0, _react.useState)(true);
+  const [isConsentFetched, setIsConsentFetched] = (0, _react.useState)(false);
   var iscanva = false;
   if (dashUrl == 'Canva') {
     var iscanva = true;
@@ -75,7 +76,8 @@ const Header = _ref => {
       var _res$data;
       const value = (_res$data = res.data) === null || _res$data === void 0 ? void 0 : _res$data.value;
       console.log('Stored Cookie Consent:', value);
-      setCookieConsent(value !== null && value !== void 0 ? value : false); // Default to false if undefined
+      setCookieConsent(value !== null && value !== void 0 ? value : false); // default to false if undefined
+      setIsConsentFetched(true); // mark as fetched
     });
   }, []);
   const handleAccept = () => {
@@ -381,7 +383,7 @@ const Header = _ref => {
       }
     }
   };
-  return /*#__PURE__*/_react.default.createElement("div", null, !cookieConsent && /*#__PURE__*/_react.default.createElement("div", {
+  return /*#__PURE__*/_react.default.createElement("div", null, isConsentFetched && !cookieConsent && /*#__PURE__*/_react.default.createElement("div", {
     className: "cookie-overlay"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "cookie-content"

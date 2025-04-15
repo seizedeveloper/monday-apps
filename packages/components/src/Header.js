@@ -44,8 +44,9 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   const [storedsubmitted, setStoredSubmitted] = useState("");
   const [storedshowEdit, setStoredShowEdit] = useState("");
   const [storedisEditing, setStoredisEditing] = useState(false);
-  const [cookieConsent, setCookieConsent] = useState(null); // Initially null to indicate not yet checked
+  const [cookieConsent, setCookieConsent] = useState(false); // Initially null to indicate not yet checked
   const [loading, setLoading] = useState(true);
+  const [isConsentFetched, setIsConsentFetched] = useState(false); 
 
   var iscanva = false;
   if (dashUrl == 'Canva') {
@@ -53,13 +54,12 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
   }
  
  // Load the stored cookie consent value when the app loads
- useEffect(() => {
-
-
+useEffect(() => {
   monday.storage.getItem('cookieConsent').then((res) => {
     const value = res.data?.value;
     console.log('Stored Cookie Consent:', value);
-    setCookieConsent(value ?? false); // Default to false if undefined
+    setCookieConsent(value ?? false); // default to false if undefined
+    setIsConsentFetched(true); // mark as fetched
   });
 }, []);
 
@@ -422,7 +422,7 @@ const Header = ({ fontCol, bgCol, defaulturl, matchingSequence, ifEditing, logo,
 
   return (
     <div >
-          {!cookieConsent && (
+          {isConsentFetched && !cookieConsent && (
         <div className="cookie-overlay">
           <div className="cookie-content">
             <h1>Cookie Consent</h1>
