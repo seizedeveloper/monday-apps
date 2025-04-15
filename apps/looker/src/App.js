@@ -57,11 +57,11 @@ const App = () => {
 
 
   // var isViewOnly = false;
-  var defaulturl = 'https://www.loom.com/share/41f37898926845b797fca215f04ce57c?sid=9d964a3a-cb25-46ff-8dad-2f88fa01e7fb';
+  var defaulturl = 'https://www.loom.com/share/fb6470a970b94a42869e710087e1683e?sid=3eacd901-69a4-4dd5-b89e-c1314976a3de';
   var matchingSequence = /reporting\/([a-zA-Z0-9-_]+)/;
   var ifEditing = false;
 
-  var appName = 'Looker Studio Integration for monday';
+  var appName = 'Looker Studio Embed for monday';
   var dashUrl = 'Looker Studio';
   var docLink = "https://satisfactiondrivers.com/looker-documentation";
   var decodePart1 = 'https://lookerstudio.google.com/embed/reporting/';
@@ -82,7 +82,7 @@ const App = () => {
       
       <div className="Container" style={{ backgroundColor: bgCol }}>
         {view ? (
-          <ViewPage fontCol={fontCol} bgCol={bgCol} />
+          <ViewPage fontCol={fontCol} bgCol={bgCol} appName={appName} />
         ) : (
           <Header fontCol={fontCol} bgCol={bgCol} defaulturl={defaulturl} matchingSequence={matchingSequence}
            ifEditing={ifEditing} logo={logo} appName={appName} 
