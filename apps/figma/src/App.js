@@ -61,7 +61,7 @@ const App = () => {
   var matchingSequence = /file\/([a-zA-Z0-9-_]+)|design\/([a-zA-Z0-9-_]+)/;
   var ifEditing = false;
 
-  var appName = 'Figma Embedder';
+  var appName = 'Figma Embedder for monday.com';
   var dashUrl = 'Figma';
   var docLink = "https://satisfactiondrivers.com/figma-documentation";
   var decodePart1 = 'https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/';

@@ -124,44 +124,6 @@ useEffect(() => {
 
 
 
-  // useEffect(() => {
-  //   const urlToUse = storedurl && storedurl !== defUrl ? storedurl : defaultUrl;
-  //   setUrl(urlToUse);
-  
-  //   // Find the matching pattern
-  //   const loomIdMatch = urlToUse.match(matchingSequence) || urlToUse.match(matchingSequence2);
-    
-  //   if (loomIdMatch) {
-  //     const id1 = loomIdMatch[1];
-  //     const id2 = loomIdMatch[2];
-  
-  //     let embedUrl;
-  //     if (iscanva && id1 && id2) {
-  //       embedUrl = urlToUse.match(matchingSequence)
-  //       ?  `https://www.canva.com/design/${id1}/${id2}/view?embed`
-  //       : `https://www.loom.com/embed/${id}?autoplay=false`;
-       
-  //     } else {
-  //       const id = id1 || id2;
-  //       embedUrl = urlToUse.match(matchingSequence)
-  //         ? `${decodePart1}${id}${decodePart2 ?? ''}`
-  //         : `https://www.loom.com/embed/${id}?autoplay=false`;
-  //     }
-  
-  //     setEmbedUrl(embedUrl);
-  //     setShowWarning(false);
-  //   } else {
-  //     setShowWarning(true);
-  //     const loomIdMatch = defaultUrl.match(matchingSequence2)
-  //     id =loomIdMatch[1] || loomIdMatch[2];
-  //     setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`); // Fallback URL
-  //   }
-  
-  //   monday.execute("valueCreatedForUser"); // Trigger event once URL is set
-  // }, [storedurl, defUrl, defaultUrl, matchingSequence, matchingSequence2, iscanva]);
-  
-
-
 
   useEffect(() => {
     if (storedurl !== '' && storedurl !== defUrl) {
@@ -313,8 +275,7 @@ useEffect(() => {
     const inputUrl = event.target.value;
     setUrl(inputUrl);
     monday.storage.instance.setItem("url", inputUrl);
-    // localStorage.setItem('url', inputUrl) ;
-    // setUrlSetting(false) ; 
+
     const loomIdMatch = inputUrl?.match(matchingSequence);
 
     if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
@@ -342,9 +303,7 @@ useEffect(() => {
         setShowWarning(true);
         setEmbedUrl(defUrl);
       }
-      // setEmbedUrl(defUrl);
       setShowWarning(true);
-      // setIsValidUrl(false);
 
     }
     if (inputUrl === "") {
