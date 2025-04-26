@@ -61,7 +61,7 @@ const App = () => {
   var matchingSequence =/\/d\/(.+?)\//;
   var ifEditing = true;
 
-  var appName = 'Google Slides Integration for monday';
+  var appName = 'Google Slides Embed for monday.com';
   var dashUrl = 'Google Slides';
   var docLink = "https://satisfactiondrivers.com/google-slides-documentation";
   var decodePart1 = 'https://docs.google.com/presentation/d/';
