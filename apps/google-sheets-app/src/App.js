@@ -61,7 +61,7 @@ const App = () => {
   var matchingSequence = /\/d\/([a-zA-Z0-9-_]+)/;
   var ifEditing = true;
 
-  var appName = 'Google Sheet Integration for monday';
+  var appName = 'Google Sheet for monday.com';
   var dashUrl = 'Google Sheet';
   var docLink = "https://satisfactiondrivers.com/google-sheet-documentation";
   var decodePart1 = 'https://docs.google.com/spreadsheets/d/'
