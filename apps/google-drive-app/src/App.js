@@ -3,7 +3,7 @@ import ViewPage from './viewPage';
 import mondaySdk from 'monday-sdk-js';
 import { Header } from "@npm-workspace-demo/components"
 // import { Header } from "/packages/components/src/index.js"
-import logo from './frame5.png';
+import logo from './logo.png';
 const App = () => {
   const [url, setUrl] = useState('');
   const [inputUrl, setInputUrl] = useState('');
@@ -62,7 +62,7 @@ const App = () => {
   var ifEditing = true;
 
   var appName = 'Google Apps Embed for monday';
-  var dashUrl = 'Google Drive';
+  var dashUrl = 'Google Apps';
   var docLink = "https://satisfactiondrivers.com/google-drive-documentation";
   var decodePart1 = 'https://drive.google.com/file/d/';
   var decodePart2 = '/preview';

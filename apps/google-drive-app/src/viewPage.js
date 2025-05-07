@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import logo from './frame5.png'
+import logo from './logo.png'
 const ViewPage = ({fontCol, bgCol}) => {
   return (
     <div>
