@@ -61,7 +61,7 @@ const App = () => {
   var matchingSequence = /\/d\/([a-zA-Z0-9_-]+)/;
   var ifEditing = true;
 
-  var appName = 'Google Drive Embed for monday';
+  var appName = 'Google Apps Embed for monday';
   var dashUrl = 'Google Drive';
   var docLink = "https://satisfactiondrivers.com/google-drive-documentation";
   var decodePart1 = 'https://drive.google.com/file/d/';
