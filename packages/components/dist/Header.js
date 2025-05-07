@@ -137,43 +137,6 @@ const Header = _ref => {
     }
     monday.execute('valueCreatedForUser'); // Value-created event when loading saved state
   }, []);
-
-  // useEffect(() => {
-  //   const urlToUse = storedurl && storedurl !== defUrl ? storedurl : defaultUrl;
-  //   setUrl(urlToUse);
-
-  //   // Find the matching pattern
-  //   const loomIdMatch = urlToUse.match(matchingSequence) || urlToUse.match(matchingSequence2);
-
-  //   if (loomIdMatch) {
-  //     const id1 = loomIdMatch[1];
-  //     const id2 = loomIdMatch[2];
-
-  //     let embedUrl;
-  //     if (iscanva && id1 && id2) {
-  //       embedUrl = urlToUse.match(matchingSequence)
-  //       ?  `https://www.canva.com/design/${id1}/${id2}/view?embed`
-  //       : `https://www.loom.com/embed/${id}?autoplay=false`;
-
-  //     } else {
-  //       const id = id1 || id2;
-  //       embedUrl = urlToUse.match(matchingSequence)
-  //         ? `${decodePart1}${id}${decodePart2 ?? ''}`
-  //         : `https://www.loom.com/embed/${id}?autoplay=false`;
-  //     }
-
-  //     setEmbedUrl(embedUrl);
-  //     setShowWarning(false);
-  //   } else {
-  //     setShowWarning(true);
-  //     const loomIdMatch = defaultUrl.match(matchingSequence2)
-  //     id =loomIdMatch[1] || loomIdMatch[2];
-  //     setEmbedUrl(`https://www.loom.com/embed/${id}?autoplay=false`); // Fallback URL
-  //   }
-
-  //   monday.execute("valueCreatedForUser"); // Trigger event once URL is set
-  // }, [storedurl, defUrl, defaultUrl, matchingSequence, matchingSequence2, iscanva]);
-
   (0, _react.useEffect)(() => {
     if (storedurl !== '' && storedurl !== defUrl) {
       setUrl(storedurl);
@@ -291,12 +254,16 @@ const Header = _ref => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [show, submitted, showWarning]);
+  function sanitizeInput(url) {
+    const cleanUrl = url.trim().replace(/<[^>]*>?/gm, ''); // strips HTML tags
+    return cleanUrl;
+  }
   const handleUrlChange = event => {
-    const inputUrl = event.target.value;
+    console.log("The input URL is:", event.target.value);
+    const inputUrl = sanitizeInput(event.target.value);
+    console.log("The input URL after sanitization is:", inputUrl);
     setUrl(inputUrl);
     monday.storage.instance.setItem("url", inputUrl);
-    // localStorage.setItem('url', inputUrl) ;
-    // setUrlSetting(false) ; 
     const loomIdMatch = inputUrl === null || inputUrl === void 0 ? void 0 : inputUrl.match(matchingSequence);
     if (loomIdMatch && (loomIdMatch[1] || loomIdMatch[2])) {
       if (iscanva && loomIdMatch[2] && loomIdMatch[1]) {
@@ -319,9 +286,7 @@ const Header = _ref => {
         setShowWarning(true);
         setEmbedUrl(defUrl);
       }
-      // setEmbedUrl(defUrl);
       setShowWarning(true);
-      // setIsValidUrl(false);
     }
     if (inputUrl === "") {
       const loomIdMatch = defaultUrl === null || defaultUrl === void 0 ? void 0 : defaultUrl.match(matchingSequence2);
@@ -340,10 +305,12 @@ const Header = _ref => {
   const DEFAULT_WIDTH = 600;
   const DEFAULT_HEIGHT = 400;
   const handleWidthChange = e => {
-    setWidth(e.target.value); // Allow user to type freely
+    const sanitizedWidth = sanitizeInput(e.target.value);
+    setWidth(sanitizedWidth); // Allow user to type freely
   };
   const handleHeightChange = e => {
-    setHeight(e.target.value); // Allow user to type freely
+    const sanitizedHeight = sanitizeInput(e.target.value);
+    setHeight(sanitizedHeight); // Allow user to type freely
   };
   const validateWidth = () => {
     if (/^0\d+$/.test(width) || Number(width) < 0) {

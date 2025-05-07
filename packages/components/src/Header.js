@@ -271,8 +271,15 @@ useEffect(() => {
     };
   }, [show, submitted, showWarning]);
 
+  function sanitizeInput(url) {
+    const cleanUrl = url.trim().replace(/<[^>]*>?/gm, ''); // strips HTML tags
+    return cleanUrl;
+  }
+  
   const handleUrlChange = (event) => {
-    const inputUrl = event.target.value;
+    console.log("The input URL is:",event.target.value);
+    const inputUrl = sanitizeInput(event.target.value);
+    console.log("The input URL after sanitization is:",inputUrl);
     setUrl(inputUrl);
     monday.storage.instance.setItem("url", inputUrl);
 
@@ -326,12 +333,14 @@ useEffect(() => {
   const DEFAULT_HEIGHT = 400;
 
   const handleWidthChange = (e) => {
-    setWidth(e.target.value); // Allow user to type freely
+    const sanitizedWidth = sanitizeInput(e.target.value)
+    setWidth(sanitizedWidth); // Allow user to type freely
    
   };
 
   const handleHeightChange = (e) => {
-    setHeight(e.target.value); // Allow user to type freely
+    const sanitizedHeight= sanitizeInput(e.target.value);
+    setHeight(sanitizedHeight); // Allow user to type freely
   };
 
   const validateWidth = () => {
